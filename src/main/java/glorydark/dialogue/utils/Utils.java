@@ -1,4 +1,9 @@
-package glorydark.dialogue.data;
+package glorydark.dialogue.utils;
+
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.command.CommandSender;
+import cn.nukkit.utils.TextFormat;
 
 /**
  * @author glorydark
@@ -28,5 +33,20 @@ public class Utils {
         return blankOfALine;
     }
 
+    public static void parseAndExecuteCommand(Player player, String command){
+        if(command.startsWith("console#")){
+            Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), command.replace("%player%", player.getName()));
+        } else if(command.startsWith("op#")) {
+            if(player.isOp()){
+                Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
+            } else {
+                Server.getInstance().addOp(player.getName());
+                Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
+                Server.getInstance().removeOp(player.getName());
+            }
+        } else{
+            Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
+        }
+    }
 
 }

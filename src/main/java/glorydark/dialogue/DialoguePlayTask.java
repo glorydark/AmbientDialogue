@@ -1,7 +1,12 @@
-package glorydark.dialogue.data;
+package glorydark.dialogue;
 
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.Task;
+import glorydark.dialogue.data.DialogueData;
+import glorydark.dialogue.data.DialogueLineData;
+import glorydark.dialogue.utils.Utils;
+
+import java.util.stream.Collectors;
 
 /**
  * @author glorydark
@@ -26,10 +31,16 @@ public class DialoguePlayTask extends Task {
     public void onRun(int i) {
         currentTicks++;
         DialogueLineData data = dialogueData.getDialogueLineData().get(currentLineIndex);
+        if(data == null){
+            DialogueMain.getPlugin().getLogger().warning("对话播放时出现不存在的对话！");
+            this.cancel();
+            return;
+        }
         if(currentTicks >= data.getExistDuration()){ // 对话播放已完成
             currentLineIndex++; // 切换到下一句
+            currentTicks = 0;
             if(currentLineIndex >= dialogueData.getDialogueLineData().size()){ // 如果已经播放完所有的对话
-                dialogueData.executeCommandsAndMessages(player); // 执行命令
+                //dialogueData.executeCommandsAndMessages(player); // 执行命令
                 this.cancel();
             }
         }else{
@@ -44,16 +55,20 @@ public class DialoguePlayTask extends Task {
         int speakerMaxLength = Utils.getStringCharCount(speakerName);
         if(speakerMaxLength < 64 && speakerMaxLength % 64 != 0){ // 是否需要补充空格
             int remained = 64 - speakerMaxLength;
-            return speakerName +Utils.getLineBlank().substring(0, remained); // 补充空格
+            speakerName = speakerName +Utils.getLineBlank().substring(0, remained); // 补充空格
         }
         // 第一行完成
         String fullText = lineData.getText();
         // 文本替换部分内容
+        speakerName = speakerName.replace("%player%", player.getName());
         fullText = fullText.replace("%player%", player.getName());
         // 替换完成
         int lineMaxLength = Utils.getStringCharCount(fullText); // 获取最大文本长度
-        int lineMaxCharAtIndex = (currentTicks / lineData.getPlayDuration()) * lineMaxLength; // 获取显示字符数
-        return speakerName + "§r" + fullText.substring(0, lineMaxCharAtIndex);
+        if(currentTicks >= lineData.getPlayDuration()){
+            return speakerName + "\n§r" + fullText;
+        }
+        int lineMaxCharAtIndex = (int)((double) (currentTicks * lineMaxLength / lineData.getPlayDuration())); // 获取显示字符数
+        return speakerName + "\n§r" + fullText.substring(0, lineMaxCharAtIndex);
     }
 
 }
