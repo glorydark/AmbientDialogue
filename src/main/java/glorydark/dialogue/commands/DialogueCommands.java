@@ -29,7 +29,7 @@ public class DialogueCommands extends Command {
                         return true;
                     }
                     DialogueMain.getPlugin().loadAllDialogues();
-                    commandSender.sendMessage("§a成功重载所有对话配置！");
+                    commandSender.sendMessage(DialogueMain.getLanguage().translateString(null, "command_reload_success"));
                     break;
                 case "play": // dialogue play BizarreDark test.yml
                     if(strings.length == 3){
@@ -41,12 +41,12 @@ public class DialogueCommands extends Command {
                                 DialogueData data = DialogueMain.getDialogues().get(fileName);
                                 DialoguePlayTask task = new DialoguePlayTask(player, data);
                                 Server.getInstance().getScheduler().scheduleRepeatingTask(DialogueMain.getPlugin(), task, 1, true);
-                                commandSender.sendMessage("§a正在为玩家§e"+playerName+"§a播放对话！");
+                                commandSender.sendMessage(DialogueMain.getLanguage().translateString(player, "command_play_to_player_success", playerName));
                             }else{
-                                commandSender.sendMessage("§c玩家§e"+playerName+"§c不存在！");
+                                commandSender.sendMessage(DialogueMain.getLanguage().translateString(null, "command_player_not_found", playerName));
                             }
                         }else{
-                            commandSender.sendMessage("§c对话文件§e"+fileName+"§c不存在！");
+                            commandSender.sendMessage(DialogueMain.getLanguage().translateString(null, "command_dialogue_not_found", fileName));
                         }
                     }
                     break;

@@ -6,6 +6,7 @@ import cn.nukkit.utils.Config;
 import glorydark.dialogue.commands.DialogueCommands;
 import glorydark.dialogue.data.DialogueData;
 import glorydark.dialogue.data.DialogueLineData;
+import glorydark.dialogue.utils.Language;
 
 import java.io.File;
 import java.util.*;
@@ -24,11 +25,16 @@ public class DialogueMain extends PluginBase {
 
     public static HashMap<String, DialogueData> dialogues = new HashMap<>();
 
+    public static Language language;
+
     @Override
     public void onEnable() {
         plugin = this;
         path = this.getDataFolder().getPath();
+        this.saveResource("config.yml");
+        this.saveResource("languages/zh_cn.properties");
         new File(path+"/dialogues/").mkdirs();
+        language = new Language(new Config(path+"/config.yml", Config.YAML).getString("lang"), path+"/languages/", path+"/players/");
         this.loadAllDialogues();
         this.getServer().getCommandMap().register("", new DialogueCommands("dialogue"));
         this.getLogger().info("AmbientDialogue Enabled");
@@ -39,7 +45,7 @@ public class DialogueMain extends PluginBase {
         File folder = new File(path+"/dialogues/");
         for(File file : Objects.requireNonNull(folder.listFiles())){
             String fileName = file.getName();
-            this.getLogger().info("§e正在加载配置："+fileName);
+            this.getLogger().info("§eLoading dialogue: "+fileName);
             Config config = new Config(file, Config.YAML);
             List<DialogueLineData> lines = new ArrayList<>();
             for(Map<String, Object> lineDataMap : (List<Map<String, Object>>) config.get("lines", new LinkedHashMap<>())){
@@ -47,9 +53,9 @@ public class DialogueMain extends PluginBase {
             }
             DialogueData data = new DialogueData(fileName, lines, new ArrayList<>(config.getStringList("commands")), new ArrayList<>(config.getStringList("messages")));
             dialogues.put(fileName, data);
-            this.getLogger().info("§a成功加载配置："+fileName);
+            this.getLogger().info("§aDialogue Loaded: "+fileName);
         }
-        this.getLogger().info("§a共加载对话"+dialogues.size()+"个");
+        this.getLogger().info("§a"+dialogues.size()+"dialogue(s) loaded successfully!");
     }
 
     public static DialogueMain getPlugin() {
@@ -68,4 +74,7 @@ public class DialogueMain extends PluginBase {
         return dialogues;
     }
 
+    public static Language getLanguage() {
+        return language;
+    }
 }
