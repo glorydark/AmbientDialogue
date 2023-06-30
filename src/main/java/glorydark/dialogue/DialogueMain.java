@@ -34,7 +34,7 @@ public class DialogueMain extends PluginBase {
         this.saveResource("config.yml");
         this.saveResource("languages/zh_cn.properties");
         new File(path+"/dialogues/").mkdirs();
-        language = new Language(new Config(path+"/config.yml", Config.YAML).getString("lang"), path+"/languages/", path+"/players/");
+        language = new Language(new Config(path+"/config.yml", Config.YAML).getString("lang"), path+"/languages/", path+"/player_lang_cache.yml");
         this.loadAllDialogues();
         this.getServer().getCommandMap().register("", new DialogueCommands("dialogue"));
         this.getLogger().info("AmbientDialogue Enabled");
