@@ -38,7 +38,7 @@ public class DialogueData {
         }
 
         for(String s: messages){
-            Server.getInstance().dispatchCommand(player, s.replace("%player%", player.getName()));
+            player.sendMessage(s.replace("%player%", player.getName()));
         }
 
     }

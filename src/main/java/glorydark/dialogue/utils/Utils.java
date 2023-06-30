@@ -33,17 +33,17 @@ public class Utils {
 
     public static void parseAndExecuteCommand(Player player, String command){
         if (command.startsWith("console#")) {
-            Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), command.replace("%player%", player.getName()));
+            Server.getInstance().executeCommand(Server.getInstance().getConsoleSender(), command.replace("%player%", player.getName()));
         } else if (command.startsWith("op#")) {
             if (player.isOp()) {
-                Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
+                Server.getInstance().executeCommand(player, command.replace("%player%", player.getName()));
             } else {
                 Server.getInstance().addOp(player.getName());
-                Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
+                Server.getInstance().executeCommand(player, command.replace("%player%", player.getName()));
                 Server.getInstance().removeOp(player.getName());
             }
         } else {
-            Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
+            Server.getInstance().executeCommand(player, command.replace("%player%", player.getName()));
         }
     }
 }
