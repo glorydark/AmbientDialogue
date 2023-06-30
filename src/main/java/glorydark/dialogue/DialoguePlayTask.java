@@ -40,7 +40,7 @@ public class DialoguePlayTask extends Task {
             currentLineIndex++; // 切换到下一句
             currentTicks = 0;
             if(currentLineIndex >= dialogueData.getDialogueLineData().size()){ // 如果已经播放完所有的对话
-                //dialogueData.executeCommandsAndMessages(player); // 执行命令
+                dialogueData.executeCommandsAndMessages(player); // 执行命令
                 this.cancel();
             }
         }else{
