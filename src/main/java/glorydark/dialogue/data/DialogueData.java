@@ -50,6 +50,14 @@ public class DialogueData {
         this.commands = commands;
     }
 
+    public List<String> getCommands() {
+        return commands;
+    }
+
+    public List<String> getMessages() {
+        return messages;
+    }
+
     public boolean isPlayerStill() {
         return playerStill;
     }

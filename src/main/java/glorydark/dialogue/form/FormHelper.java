@@ -5,7 +5,9 @@ import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementButton;
+import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
+import cn.nukkit.form.element.ElementToggle;
 import cn.nukkit.form.response.FormResponseCustom;
 import glorydark.dialogue.DialogueMain;
 import glorydark.dialogue.data.DialogueData;
@@ -42,16 +44,22 @@ public class FormHelper {
     // 选择对话编辑类型
     public static void showDialogueEditTypeSelect(Player showing, DialogueData data){
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_select_title"), DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_select_content"));
-        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_create")));
-        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_edit")));
-        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_remove")));
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_create_line")));
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_edit_line")));
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_remove_line")));
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_basic_configuration")));
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_commands")));
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_type_messages")));
         simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_button_return")));
         simple.onClicked((elementButton, player) -> {
             switch (simple.getResponse().getClickedButtonId()) {
                 case 0 -> showCreateDialogueLine(showing, data);
                 case 1 -> showDialogueLineSelect(showing, data, FormType.EditLine);
                 case 2 -> showDialogueLineSelect(showing, data, FormType.RemoveLine);
-                case 3 -> showDialogueSelect(showing);
+                case 3 -> showBasicConfigurationEdit(showing, data);
+                case 4 -> showCommandsEditSelect(showing, data);
+                case 5 -> showMessagesEditSelect(showing, data);
+                case 6 -> showDialogueSelect(showing);
             }
         });
         simple.showToPlayer(showing);
@@ -96,12 +104,12 @@ public class FormHelper {
             String existTicks = responses.getInputResponse(2);
             String playTicks = responses.getInputResponse(3);
             if(speakerName.equals("") || text.equals("") || existTicks.equals("") || playTicks.equals("")){
-                showReturn(showing, data, (player1, data1) -> showDialogueLineSelect(showing, data, FormType.EditLine), false);
+                showReturn(player, data, (player1, data1) -> showDialogueLineSelect(player, data, FormType.EditLine), false);
                  return;
             }
             data.getDialogueLineData().add(new DialogueLineData(speakerName, text, Integer.parseInt(existTicks), Integer.parseInt(playTicks)));
             data.saveAll();
-            showReturn(showing, data, (player1, data1) -> showDialogueEditTypeSelect(showing, data), true);
+            showReturn(player, data, (player1, data1) -> showDialogueEditTypeSelect(player, data), true);
         });
         custom.showToPlayer(showing);
     }
@@ -121,11 +129,12 @@ public class FormHelper {
                 lineData.setPlayDuration(Integer.parseInt(responses.getInputResponse(3)));
             }
             data.saveAll();
-            showReturn(showing, data, (player1, data1) -> showDialogueLineSelect(showing, data, FormType.EditLine), true);
+            showReturn(player, data, (player1, data1) -> showDialogueLineSelect(player, data, FormType.EditLine), true);
         });
         custom.showToPlayer(showing);
     }
 
+    // 返回界面
     public static void showReturn(Player showing, DialogueData data, BiConsumer<Player, DialogueData> consumer, boolean success){
         AdvancedFormWindowModal modal = new AdvancedFormWindowModal(DialogueMain.getLanguage().translateString(showing, "form_return_title")
                 , success? DialogueMain.getLanguage().translateString(showing, "form_dialogue_line_edit_success"): DialogueMain.getLanguage().translateString(showing, "form_dialogue_line_edit_failed")
@@ -134,5 +143,107 @@ public class FormHelper {
         modal.onClickedTrue(player -> consumer.accept(player, data));
         modal.showToPlayer(showing);
     }
+
+    // 基础配置界面
+    public static void showBasicConfigurationEdit(Player showing, DialogueData data){
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_basic_title"));
+        custom.addElement(new ElementToggle(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_basic_player_still")));
+        custom.onResponded((formResponseCustom, player) -> {
+            data.setPlayerStill(formResponseCustom.getToggleResponse(0));
+            data.saveAll();
+            showReturn(player, data, FormHelper::showDialogueEditTypeSelect, true);
+        });
+        custom.showToPlayer(showing);
+    }
+
+    // 修改命令
+    public static void showCommandsEditSelect(Player showing, DialogueData data){
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_edit_title"), "");
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_button_add")));
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_button_remove")));
+        simple.onClicked((elementButton, player) -> {
+            switch (simple.getResponse().getClickedButtonId()) {
+                case 0 -> showAddCommand(player, data);
+                case 1 -> showRemoveCommandsList(player, data);
+            }
+        });
+        simple.showToPlayer(showing);
+    }
+
+    public static void showMessagesEditSelect(Player showing, DialogueData data){
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_messages_edit_title"), "");
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_messages_button_add")));
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_messages_button_remove")));
+        simple.onClicked((elementButton, player) -> {
+            switch (simple.getResponse().getClickedButtonId()) {
+                case 0 -> showAddMessage(player, data);
+                case 1 -> showRemoveMessagesList(player, data);
+            }
+        });
+        simple.showToPlayer(showing);
+    }
+
+    public static void showAddCommand(Player showing, DialogueData data){
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_add_title"));
+        custom.addElement(new ElementInput(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_add_command_input")));
+        ElementDropdown dropdown = new ElementDropdown(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_add_execute_type"));
+        dropdown.addOption(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_add_execute_type_player"), true);
+        dropdown.addOption(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_add_execute_type_op"));
+        dropdown.addOption(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_add_execute_type_console"));
+        custom.addElement(dropdown);
+        custom.onResponded((formResponseCustom, player) -> {
+            String command = switch (formResponseCustom.getDropdownResponse(1).getElementID()) {
+                case 1 -> "op#" + formResponseCustom.getInputResponse(0);
+                case 2 -> "console#" + formResponseCustom.getInputResponse(0);
+                default -> formResponseCustom.getInputResponse(0);
+            };
+            data.getCommands().add(command);
+            data.saveAll();
+            showReturn(player, data, FormHelper::showCommandsEditSelect, true);
+        });
+        custom.onClosed(player -> showCommandsEditSelect(player, data));
+        custom.showToPlayer(showing);
+    }
+
+    public static void showAddMessage(Player showing, DialogueData data){
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_messages_add_title"));
+        custom.onResponded((formResponseCustom, player) -> {
+            data.getMessages().add(formResponseCustom.getInputResponse(0));
+            data.saveAll();
+            showReturn(player, data, FormHelper::showCommandsEditSelect, true);
+        });
+        custom.onClosed(player -> showMessagesEditSelect(player, data));
+        custom.addElement(new ElementInput(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_messages_add_message_input")));
+        custom.showToPlayer(showing);
+    }
+
+    public static void showRemoveCommandsList(Player showing, DialogueData data){
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_commands_remove_title"), "");
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_button_return")));
+        for(String option : data.getCommands()){
+            simple.addButton(new ElementButton(option));
+        }
+        simple.onClosed(player -> showCommandsEditSelect(player, data));
+        simple.onClicked((elementButton, player) -> {
+            showReturn(player, data, FormHelper::showCommandsEditSelect, data.getCommands().remove(elementButton.getText()));
+            data.saveAll();
+        });
+        simple.showToPlayer(showing);
+    }
+
+    public static void showRemoveMessagesList(Player showing, DialogueData data){
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_messages_remove_title"), "");
+        simple.addButton(new ElementButton(DialogueMain.getLanguage().translateString(showing, "form_button_return")));
+        for(String option : data.getMessages()){
+            simple.addButton(new ElementButton(option));
+        }
+        simple.onClosed(player -> showCommandsEditSelect(player, data));
+        simple.onClicked((elementButton, player) -> {
+            showReturn(player, data, FormHelper::showCommandsEditSelect, data.getMessages().remove(elementButton.getText()));
+            data.saveAll();
+        });
+        simple.showToPlayer(showing);
+    }
+
 
 }

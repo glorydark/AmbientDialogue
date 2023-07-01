@@ -6,6 +6,8 @@ commands:
 # Messages that are to be sent to players at the end of this dialogue
 messages:
   - 2333
+# 禁止玩家移动
+# When this option is set to true, player is not allowed to move during the dialogue playing
 player_still: true
 lines:
     # 播放文本
