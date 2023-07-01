@@ -89,7 +89,7 @@ public class DialogueData {
         List<Map<String, Object>> lines = new ArrayList<>();
         for(DialogueLineData lineData: dialogueLineData){
             Map<String, Object> line = new HashMap<>();
-            line.put("text", lineData.getText());
+            line.put("text", lineData.getText().replace("\n", "\\n"));
             line.put("speaker_name", lineData.getSpeakerName());
             line.put("exist_ticks", lineData.getExistDuration());
             line.put("play_ticks", lineData.getPlayDuration());
