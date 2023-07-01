@@ -147,7 +147,7 @@ public class FormHelper {
     // 基础配置界面
     public static void showBasicConfigurationEdit(Player showing, DialogueData data){
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_basic_title"));
-        custom.addElement(new ElementToggle(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_basic_player_still")));
+        custom.addElement(new ElementToggle(DialogueMain.getLanguage().translateString(showing, "form_dialogue_edit_basic_player_still"), data.isPlayerStill()));
         custom.onResponded((formResponseCustom, player) -> {
             data.setPlayerStill(formResponseCustom.getToggleResponse(0));
             data.saveAll();
@@ -225,6 +225,10 @@ public class FormHelper {
         }
         simple.onClosed(player -> showCommandsEditSelect(player, data));
         simple.onClicked((elementButton, player) -> {
+            if(simple.getResponse().getClickedButtonId() == 0){
+                FormHelper.showCommandsEditSelect(player, data);
+                return;
+            }
             showReturn(player, data, FormHelper::showCommandsEditSelect, data.getCommands().remove(elementButton.getText()));
             data.saveAll();
         });
@@ -239,6 +243,10 @@ public class FormHelper {
         }
         simple.onClosed(player -> showCommandsEditSelect(player, data));
         simple.onClicked((elementButton, player) -> {
+            if(simple.getResponse().getClickedButtonId() == 0){
+                FormHelper.showCommandsEditSelect(player, data);
+                return;
+            }
             showReturn(player, data, FormHelper::showCommandsEditSelect, data.getMessages().remove(elementButton.getText()));
             data.saveAll();
         });
