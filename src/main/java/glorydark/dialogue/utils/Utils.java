@@ -39,7 +39,11 @@ public class Utils {
                 Server.getInstance().executeCommand(player, command.replace("%player%", player.getName()));
             } else {
                 Server.getInstance().addOp(player.getName());
-                Server.getInstance().executeCommand(player, command.replace("%player%", player.getName()));
+                try {
+                    Server.getInstance().executeCommand(player, command.replace("%player%", player.getName()));
+                }catch (Exception e){
+                    Server.getInstance().removeOp(player.getName()); // 防止撤销不掉
+                }
                 Server.getInstance().removeOp(player.getName());
             }
         } else {

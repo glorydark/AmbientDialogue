@@ -1,12 +1,12 @@
 package glorydark.dialogue;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.scheduler.NukkitRunnable;
 import cn.nukkit.scheduler.Task;
 import glorydark.dialogue.data.DialogueData;
 import glorydark.dialogue.data.DialogueLineData;
 import glorydark.dialogue.utils.Utils;
-
-import java.util.stream.Collectors;
 
 /**
  * @author glorydark
@@ -40,7 +40,12 @@ public class DialoguePlayTask extends Task {
             currentLineIndex++; // 切换到下一句
             currentTicks = 0;
             if(currentLineIndex >= dialogueData.getDialogueLineData().size()){ // 如果已经播放完所有的对话
-                dialogueData.executeCommandsAndMessages(player); // 执行命令
+                Server.getInstance().getScheduler().scheduleDelayedTask(DialogueMain.getPlugin(), new NukkitRunnable() {
+                    @Override
+                    public void run() {
+                        dialogueData.executeCommandsAndMessages(player); // 执行命令
+                    }
+                }, 5); // 防止CurrentModification的问题
                 this.cancel();
             }
         }else{
@@ -52,9 +57,10 @@ public class DialoguePlayTask extends Task {
         DialogueLineData lineData = dialogueData.getDialogueLineData().get(currentLineIndex);
         // 先完成对话者的一行
         String speakerName = lineData.getSpeakerName();
-        int speakerMaxLength = Utils.getStringCharCount(speakerName);
-        if(speakerMaxLength < 64 && speakerMaxLength % 64 != 0){ // 是否需要补充空格
-            int remained = 64 - speakerMaxLength;
+        int speakerLength = Utils.getStringCharCount(speakerName);
+        int lineMaxLength = DialogueMain.lineMaxLength;
+        if(speakerLength < lineMaxLength && speakerLength % lineMaxLength != 0){ // 是否需要补充空格
+            int remained = lineMaxLength - speakerLength;
             speakerName = speakerName +Utils.getLineBlank().substring(0, remained); // 补充空格
         }
         // 第一行完成
@@ -63,11 +69,11 @@ public class DialoguePlayTask extends Task {
         speakerName = speakerName.replace("%player%", player.getName());
         fullText = fullText.replace("%player%", player.getName());
         // 替换完成
-        int lineMaxLength = Utils.getStringCharCount(fullText); // 获取最大文本长度
+        int lineLength = Utils.getStringCharCount(fullText); // 获取最大文本长度
         if(currentTicks >= lineData.getPlayDuration()){
             return speakerName + "\n§r" + fullText;
         }
-        int lineMaxCharAtIndex = (int)((double) (currentTicks * lineMaxLength / lineData.getPlayDuration())); // 获取显示字符数
+        int lineMaxCharAtIndex = (int)((double) (currentTicks * lineLength / lineData.getPlayDuration())); // 获取显示字符数
         return speakerName + "\n§r" + fullText.substring(0, lineMaxCharAtIndex);
     }
 

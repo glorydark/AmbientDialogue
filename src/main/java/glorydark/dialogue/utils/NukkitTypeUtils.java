@@ -14,21 +14,11 @@ public class NukkitTypeUtils {
 
     static {
         switch (Server.getInstance().getCodename().toLowerCase()) {
-            case "powernukkitx":
-                nukkitType = NukkitType.POWER_NUKKIT_X;
-                break;
-            case "powernukkit":
-                nukkitType = NukkitType.POWER_NUKKIT;
-                break;
-            case "pm1e":
-                nukkitType = NukkitType.PM1E;
-                break;
-            case "mot":
-                nukkitType = NukkitType.MOT;
-                break;
-            default:
-                nukkitType = NukkitType.NUKKITX;
-                break;
+            case "powernukkitx" -> nukkitType = NukkitType.POWER_NUKKIT_X;
+            case "powernukkit" -> nukkitType = NukkitType.POWER_NUKKIT;
+            case "pm1e" -> nukkitType = NukkitType.PM1E;
+            case "mot" -> nukkitType = NukkitType.MOT;
+            default -> nukkitType = NukkitType.NUKKITX;
         }
     }
 
