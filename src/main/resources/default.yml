@@ -1,0 +1,24 @@
+# 播放完成指令
+# Commands that are to be executed at the end of this dialogue
+commands:
+  - me 233
+# 播放完成执行消息
+# Messages that are to be sent to players at the end of this dialogue
+messages:
+  - 2333
+# 禁止玩家移动
+# When this option is set to true, player is not allowed to move during the dialogue playing
+player_still: true
+lines:
+    # 播放文本
+    # a line in the dialogue
+  - text: Men always remember love because of romance only
+    # 说话者名字（显示）
+    # the speakers' name that will be shown
+    speaker_name: test1
+    # 此段对话的停留时间（tick） 需要大于play_ticks
+    # the duration of this line's lingering
+    exist_ticks: 50
+    # 文字播放的时间（tick）
+    # the play duration of this line
+    play_ticks: 40
