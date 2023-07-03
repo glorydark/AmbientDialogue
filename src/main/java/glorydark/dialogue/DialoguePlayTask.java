@@ -69,7 +69,7 @@ public class DialoguePlayTask extends Task {
         speakerName = speakerName.replace("%player%", player.getName());
         fullText = fullText.replace("%player%", player.getName());
         // 替换完成
-        int lineLength = Utils.getStringCharCount(fullText); // 获取最大文本长度
+        int lineLength = fullText.length(); // 获取最大文本长度
         if(currentTicks >= lineData.getPlayDuration()){
             return speakerName + "\n§r" + fullText;
         }

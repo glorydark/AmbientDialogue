@@ -97,8 +97,8 @@ public class DialogueMain extends PluginBase implements Listener {
             return;
         }
         if(task.dialogueData.isPlayerStill()) {
-            if (event.getFrom().getX() == event.getTo().getX()) {
-                if (event.getFrom().getZ() == event.getTo().getZ()) {
+            if (event.getFrom().getFloorX() != event.getTo().getFloorX()) {
+                if (event.getFrom().getFloorZ() != event.getTo().getFloorZ()) {
                     event.setCancelled();
                 }
             }
