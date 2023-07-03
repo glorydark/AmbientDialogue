@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerMoveEvent;
+import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import glorydark.dialogue.commands.DialogueCommands;
@@ -102,6 +103,15 @@ public class DialogueMain extends PluginBase implements Listener {
                     event.setCancelled();
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void PlayerQuitEvent(PlayerQuitEvent event){
+        DialoguePlayTask task = playerPlayingTasks.get(event.getPlayer());
+        if(task != null){
+            task.cancel();
+            playerPlayingTasks.remove(event.getPlayer());
         }
     }
 
