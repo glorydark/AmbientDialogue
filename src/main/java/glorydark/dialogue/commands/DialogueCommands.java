@@ -32,7 +32,7 @@ public class DialogueCommands extends Command {
                     if(strings.length != 2){
                         Server.getInstance().dispatchCommand(commandSender, "dialogue help");
                     }else{
-                        String fileName = strings[1]+".yml"; // 保存文件名
+                        String fileName = strings[1] + ".yml"; // 保存文件名
                         if(DialogueMain.dialogues.containsKey(fileName)){ // 如果已经存在，提示错误
                             commandSender.sendMessage(DialogueMain.getLanguage().translateString(null, "command_dialogue_existed"));
                         }else{ // 未存在，将resources里面的default.yml保存为新的文件
@@ -62,7 +62,7 @@ public class DialogueCommands extends Command {
                         return true;
                     }
                     if (strings.length == 3) {
-                        String fileName = strings[2];
+                        String fileName = strings[2] + ".yml";
                         boolean isPlayer = commandSender.isPlayer();
                         if (DialogueMain.getDialogues().containsKey(fileName)) {
                             String playerName = strings[1];

@@ -98,10 +98,8 @@ public class DialogueMain extends PluginBase implements Listener {
             return;
         }
         if(task.dialogueData.isPlayerStill()) {
-            if (event.getFrom().getFloorX() != event.getTo().getFloorX()) {
-                if (event.getFrom().getFloorZ() != event.getTo().getFloorZ()) {
-                    event.setCancelled();
-                }
+            if ((event.getFrom().getFloorX() != event.getTo().getFloorX()) || (event.getFrom().getFloorZ() != event.getTo().getFloorZ())) {
+                event.setCancelled();
             }
         }
     }
@@ -114,6 +112,5 @@ public class DialogueMain extends PluginBase implements Listener {
             playerPlayingTasks.remove(event.getPlayer());
         }
     }
-
 
 }
