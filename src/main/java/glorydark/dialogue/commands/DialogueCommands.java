@@ -32,14 +32,15 @@ public class DialogueCommands extends Command {
                     if(strings.length != 2){
                         Server.getInstance().dispatchCommand(commandSender, "dialogue help");
                     }else{
-                        String fileName = strings[1] + ".yml"; // 保存文件名
+                        String fileName = strings[1]+".yml"; // 保存文件名
                         if(DialogueMain.dialogues.containsKey(fileName)){ // 如果已经存在，提示错误
-                            commandSender.sendMessage(DialogueMain.getLanguage().translateString(null, "command_dialogue_existed"));
+                            commandSender.sendMessage(DialogueMain.getLanguage().translateString(null, "command_dialogue_existed", strings[1]));
                         }else{ // 未存在，将resources里面的default.yml保存为新的文件
                             File file = new File(DialogueMain.getPath()+"/dialogues/"+fileName);
                             if(DialogueMain.getPlugin().saveResource("default.yml", "dialogues/"+file.getName(), false)) {
                                 DialogueMain.getPlugin().loadDialogue(file);
                             }
+                            commandSender.sendMessage(DialogueMain.getLanguage().translateString(null, "command_create_success", strings[1]));
                         }
                     }
                     break;
