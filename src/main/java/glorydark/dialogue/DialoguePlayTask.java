@@ -44,13 +44,13 @@ public class DialoguePlayTask extends Task {
             currentLineIndex++; // 切换到下一句
             currentTicks = 0;
             if(currentLineIndex >= dialogueData.getDialogueLineData().size()){ // 如果已经播放完所有的对话
+                DialogueMain.playerPlayingTasks.remove(player);
                 Server.getInstance().getScheduler().scheduleDelayedTask(DialogueMain.getPlugin(), new NukkitRunnable() {
                     @Override
                     public void run() {
                         dialogueData.executeCommandsAndMessages(player); // 执行命令
                     }
                 }, 5); // 防止CurrentModification的问题
-                DialogueMain.playerPlayingTasks.remove(player);
                 this.cancel();
             }
         }else{
