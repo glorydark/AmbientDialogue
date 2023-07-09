@@ -29,6 +29,10 @@ public class DialoguePlayTask extends Task {
 
     @Override
     public void onRun(int i) {
+        if(player == null || !player.isOnline()){
+            DialogueMain.playerPlayingTasks.remove(player);
+            this.cancel();
+        }
         currentTicks++;
         DialogueLineData data = dialogueData.getDialogueLineData().get(currentLineIndex);
         if(data == null){
@@ -46,6 +50,7 @@ public class DialoguePlayTask extends Task {
                         dialogueData.executeCommandsAndMessages(player); // 执行命令
                     }
                 }, 5); // 防止CurrentModification的问题
+                DialogueMain.playerPlayingTasks.remove(player);
                 this.cancel();
             }
         }else{

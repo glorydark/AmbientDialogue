@@ -62,7 +62,7 @@ public class DialogueCommands extends Command {
                         return true;
                     }
                     if (strings.length == 3) {
-                        String fileName = strings[2];
+                        String fileName = strings[2] + ".yml";
                         boolean isPlayer = commandSender.isPlayer();
                         if (DialogueMain.getDialogues().containsKey(fileName)) {
                             String playerName = strings[1];
@@ -76,6 +76,7 @@ public class DialogueCommands extends Command {
                                 }
                                 DialogueData data = DialogueMain.getDialogues().get(fileName);
                                 DialoguePlayTask task = new DialoguePlayTask(player, data);
+                                DialogueMain.playerPlayingTasks.put(player, task);
                                 DialogueMain.getPlugin().getServer().getScheduler().scheduleRepeatingTask(DialogueMain.getPlugin(), task, 1, true);
                                 if (isPlayer) {
                                     commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender.asPlayer(), "command_play_to_player_success", playerName));
