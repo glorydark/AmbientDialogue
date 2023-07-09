@@ -55,7 +55,7 @@ public class DialogueMain extends PluginBase implements Listener {
         for(File file : Objects.requireNonNull(folder.listFiles())){
             this.loadDialogue(file);
         }
-        this.getLogger().info("§a"+dialogues.size()+"dialogue(s) loaded successfully!");
+        this.getLogger().info("§a"+dialogues.size()+" dialogue(s) loaded successfully!");
     }
 
     public void loadDialogue(File file){
