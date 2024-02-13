@@ -1,6 +1,7 @@
 package glorydark.dialogue.action;
 
 import cn.nukkit.Player;
+import glorydark.dialogue.DialogueMain;
 import glorydark.dialogue.action.requirement.Requirement;
 import glorydark.dialogue.action.type.SimpleCommandAction;
 import glorydark.dialogue.action.type.SimpleMessageAction;
@@ -63,7 +64,7 @@ public abstract class ExecuteAction {
     }
 
     public void setRequirements(List<Map<String, Object>> requirements) {
-        this.requirements.addAll(Requirement.parseRequirement(requirements));
+        this.requirements.addAll(DialogueMain.getRequirementRegistry().parseRequirement(requirements));
     }
 
     public ActionType getActionType() {

@@ -39,7 +39,7 @@ public class DialogueData {
         this.identifier = identifier;
         this.dialogueLineData = dataList;
         this.playerStill = playerStill;
-        this.openRequirements = Requirement.parseRequirement(openRequirements);
+        this.openRequirements = DialogueMain.getRequirementRegistry().parseRequirement(openRequirements);
         for (Map<String, Object> action : preStartActions) {
             this.addPreStartExecuteAction(ExecuteAction.parseExecuteActionFromMap(action));
         }

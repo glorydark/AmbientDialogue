@@ -34,7 +34,7 @@ public class DialogueCommands extends Command {
                         Server.getInstance().dispatchCommand(commandSender, "dialogue help");
                     } else {
                         String fileName = strings[1] + ".yml"; // 保存文件名
-                        if (DialogueMain.dialogues.containsKey(fileName)) { // 如果已经存在，提示错误
+                        if (DialogueMain.getDialogues().containsKey(fileName)) { // 如果已经存在，提示错误
                             commandSender.sendMessage(DialogueMain.getLanguage().translateString(null, "command_dialogue_existed", strings[1]));
                         } else { // 未存在，将resources里面的default.yml保存为新的文件
                             File file = new File(DialogueMain.getPath() + "/dialogues/" + fileName);
@@ -73,7 +73,7 @@ public class DialogueCommands extends Command {
                             String playerName = strings[1];
                             Player player = Server.getInstance().getPlayer(playerName);
                             if (player != null) {
-                                if (DialogueMain.playerPlayingTasks.containsKey(player)) { // 避免玩家已经播放对话
+                                if (DialogueMain.getPlayerPlayingTasks().containsKey(player)) { // 避免玩家已经播放对话
                                     commandSender.sendMessage(DialogueMain.getLanguage().translateString((Player) commandSender, "command_player_in_dialogue", playerName));
                                     return true;
                                 }

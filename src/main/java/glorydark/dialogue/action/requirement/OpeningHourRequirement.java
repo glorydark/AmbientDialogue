@@ -2,6 +2,8 @@ package glorydark.dialogue.action.requirement;
 
 import cn.nukkit.Player;
 import glorydark.dialogue.DialogueMain;
+import glorydark.dialogue.action.requirement.parser.OpeningHourRequirementParser;
+import glorydark.dialogue.action.requirement.parser.base.RequirementParser;
 import glorydark.dialogue.data.DialogueData;
 import glorydark.dialogue.utils.Utils;
 
@@ -11,6 +13,8 @@ import java.util.List;
  * @author glorydark
  */
 public class OpeningHourRequirement extends Requirement {
+
+    protected static final OpeningHourRequirementParser parser = new OpeningHourRequirementParser();
 
     protected long startTime;
 
@@ -41,5 +45,9 @@ public class OpeningHourRequirement extends Requirement {
     @Override
     public String getDefaultFailedMessage(Player player) {
         return DialogueMain.getLanguage().translateString(player, "tip_dialogue_requirement_failed_not_in_opening_hours");
+    }
+
+    public static RequirementParser getRequirementParser() {
+        return parser;
     }
 }

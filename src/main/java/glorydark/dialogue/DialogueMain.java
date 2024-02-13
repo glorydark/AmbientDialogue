@@ -8,6 +8,7 @@ import cn.nukkit.event.player.PlayerDeathEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import glorydark.dialogue.action.requirement.RequirementRegistry;
 import glorydark.dialogue.commands.DialogueCommands;
 import glorydark.dialogue.data.DialogueData;
 import glorydark.dialogue.data.DialogueLineData;
@@ -22,13 +23,15 @@ import java.util.*;
  */
 public class DialogueMain extends PluginBase implements Listener {
 
-    public static HashMap<Player, DialoguePlayTask> playerPlayingTasks = new HashMap<>();
-    public static HashMap<String, DialogueData> dialogues = new HashMap<>();
+    protected static HashMap<Player, DialoguePlayTask> playerPlayingTasks = new HashMap<>();
+    protected static HashMap<String, DialogueData> dialogues = new HashMap<>();
+
     public static Language language;
     public static int lineMaxLength;
     public static boolean invincibleInDialogue;
-    private static DialogueMain plugin;
-    private static String path;
+    protected static DialogueMain plugin;
+    protected static String path;
+    protected static RequirementRegistry requirementRegistry = new RequirementRegistry();
 
     public static DialogueMain getInstance() {
         return plugin;
@@ -48,6 +51,10 @@ public class DialogueMain extends PluginBase implements Listener {
 
     public static Language getLanguage() {
         return language;
+    }
+
+    public static RequirementRegistry getRequirementRegistry() {
+        return requirementRegistry;
     }
 
     @Override
