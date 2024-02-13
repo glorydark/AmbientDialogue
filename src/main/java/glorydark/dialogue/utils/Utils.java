@@ -2,6 +2,10 @@ package glorydark.dialogue.utils;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import glorydark.dialogue.DialogueMain;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author glorydark
@@ -27,11 +31,11 @@ public class Utils {
         return length;
     }
 
-    public static String getLineBlank(){
+    public static String getLineBlank() {
         return blankOfALine;
     }
 
-    public static void parseAndExecuteCommand(Player player, String command){
+    public static void parseAndExecuteCommand(Player player, String command) {
         if (command.startsWith("console#")) {
             Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), command.replace("%player%", player.getName()));
         } else if (command.startsWith("op#")) {
@@ -41,7 +45,7 @@ public class Utils {
                 Server.getInstance().addOp(player.getName());
                 try {
                     Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
-                }catch (Exception e){
+                } catch (Exception e) {
                     Server.getInstance().removeOp(player.getName()); // 防止撤销不掉
                 }
                 Server.getInstance().removeOp(player.getName());
@@ -49,5 +53,31 @@ public class Utils {
         } else {
             Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
         }
+    }
+
+    public static Date stringToDate(String string) {
+        return stringToDate(string, "yyyy-MM-dd HH-mm-ss");
+    }
+
+    public static Date stringToDate(String string, String dateFormat) {
+        if (string.equals("")) {
+            return new Date(-1);
+        }
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+        Date date;
+        try {
+            date = format.parse(string);
+        } catch (Exception e) {
+            date = new Date(-1);
+            DialogueMain.getInstance().getLogger().warning("Error in parsing date string: " + string);
+        }
+        return date;
+    }
+
+    public static void sendPlayerMessage(Player player, String message) {
+        if (message.trim().equals("")) {
+            return;
+        }
+        player.sendMessage(message);
     }
 }

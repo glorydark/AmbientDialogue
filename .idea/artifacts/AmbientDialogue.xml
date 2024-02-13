@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="AmbientDialogue">
+    <output-path>$PROJECT_DIR$/../../dependencies/moli-test-server/plugins</output-path>
+    <root id="archive" name="AmbientDialogue.jar">
+      <element id="module-output" name="AmbientDialogue" />
+    </root>
+  </artifact>
+</component>

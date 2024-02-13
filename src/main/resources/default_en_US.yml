@@ -1,0 +1,50 @@
+# 禁止玩家移动
+# When this option is set to true, player is not allowed to move during the dialogue playing
+player_still: true
+lines:
+  # a line in the dialogue
+  - text: Men always remember love because of romance only\n233
+    # the speakers' name that will be shown
+    speaker_name: test1
+    # the duration of this line's lingering
+    exist_ticks: 50
+    # 文字播放的时间（tick）
+    # the play duration of this line
+    play_ticks: 40
+# This is the preconditions to start a dialogue
+open_requirements:
+  # This can execute command in opening hours.
+  - type: "is_opening_hours"
+    start_time: "2024-02-14-05-02-42"
+    end_time: "2024-02-14-05-04-12"
+    failed_messages:
+      - "Not in the opening hour!"
+    enable_default_failed_message: false
+prestart_actions:
+  - type: "command"
+    commands: # prefix: "op#" "console#" to execute these in different permissions
+      - "me 'Hi!'"
+  - type: "messages"
+    messages:
+      - "test"
+  # This means when played again, the dialogue will be skipped directly
+  - type: "skip_dialogue"
+    requirements:
+      - type: "is_the_first_time"
+        # This is the compared value, which is default set to true.
+        compared_value: false
+tick_actions:
+  # This means at this tick, actions will be executed.
+  - tick: 20
+    type: "commands"
+    commands:
+      - "me 'test tick message'"
+    requirements:
+      - type: "is_once_only"
+        failed_messages:
+          - "failed message test"
+        # If disabled, this plugin will not send default failed message to players.
+        enable_default_failed_message: false
+# How to edit this part is equal to the key "prestart_actions",
+# but you cannot use skip_dialogue action.
+end_actions: []

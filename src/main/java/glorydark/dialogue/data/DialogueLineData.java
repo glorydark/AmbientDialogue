@@ -14,7 +14,7 @@ public class DialogueLineData {
 
     protected String speakerName;
 
-    public DialogueLineData(String text, String speakerName, int existDuration, int playDuration){
+    public DialogueLineData(String text, String speakerName, int existDuration, int playDuration) {
         this.text = text;
         // 对换行符进行处理
         this.text = this.text.replace("\\n", "\n");
@@ -27,31 +27,31 @@ public class DialogueLineData {
         return existDuration;
     }
 
+    public void setExistDuration(int existDuration) {
+        this.existDuration = existDuration;
+    }
+
     public int getPlayDuration() {
         return playDuration;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public String getSpeakerName() {
-        return speakerName;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void setSpeakerName(String speakerName) {
-        this.speakerName = speakerName;
     }
 
     public void setPlayDuration(int playDuration) {
         this.playDuration = playDuration;
     }
 
-    public void setExistDuration(int existDuration) {
-        this.existDuration = existDuration;
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getSpeakerName() {
+        return speakerName;
+    }
+
+    public void setSpeakerName(String speakerName) {
+        this.speakerName = speakerName;
     }
 }

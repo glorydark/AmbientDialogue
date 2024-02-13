@@ -3,7 +3,8 @@ package glorydark.dialogue;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.player.PlayerMoveEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.player.PlayerDeathEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
@@ -21,57 +22,15 @@ import java.util.*;
  */
 public class DialogueMain extends PluginBase implements Listener {
 
+    public static HashMap<Player, DialoguePlayTask> playerPlayingTasks = new HashMap<>();
+    public static HashMap<String, DialogueData> dialogues = new HashMap<>();
+    public static Language language;
+    public static int lineMaxLength;
+    public static boolean invincibleInDialogue;
     private static DialogueMain plugin;
-
     private static String path;
 
-    public static HashMap<Player, DialoguePlayTask> playerPlayingTasks = new HashMap<>();
-
-    public static HashMap<String, DialogueData> dialogues = new HashMap<>();
-
-    public static Language language;
-
-    public static int lineMaxLength;
-
-    @Override
-    public void onEnable() {
-        plugin = this;
-        path = this.getDataFolder().getPath();
-        this.saveResource("config.yml");
-        this.saveResource("languages/zh_cn.properties");
-        new File(path+"/dialogues/").mkdirs();
-        Config config = new Config(path+"/config.yml", Config.YAML);
-        lineMaxLength = config.getInt("line_max_length", 64);
-        language = new Language(config.getString("lang"), path+"/languages/", path+"/player_lang_cache.yml");
-        this.loadAllDialogues();
-        this.getServer().getCommandMap().register("", new DialogueCommands("dialogue"));
-        this.getServer().getPluginManager().registerEvents(this, this);
-        this.getLogger().info("AmbientDialogue Enabled");
-    }
-
-    public void loadAllDialogues(){
-        dialogues.clear(); // 先清空，为reload做准备
-        File folder = new File(path+"/dialogues/");
-        for(File file : Objects.requireNonNull(folder.listFiles())){
-            this.loadDialogue(file);
-        }
-        this.getLogger().info("§a"+dialogues.size()+" dialogue(s) loaded successfully!");
-    }
-
-    public void loadDialogue(File file){
-        String fileName = file.getName();
-        this.getLogger().info("§eLoading dialogue: "+fileName);
-        Config config = new Config(file, Config.YAML);
-        List<DialogueLineData> lines = new ArrayList<>();
-        for(Map<String, Object> lineDataMap : (List<Map<String, Object>>) config.get("lines", new LinkedHashMap<>())){
-            lines.add(new DialogueLineData((String) lineDataMap.get("text"), (String) lineDataMap.get("speaker_name"), (Integer) lineDataMap.get("exist_ticks"), (Integer) lineDataMap.get("play_ticks")));
-        }
-        DialogueData data = new DialogueData(fileName, lines, new ArrayList<>(config.getStringList("commands")), new ArrayList<>(config.getStringList("messages")), config.getBoolean("player_still", true));
-        dialogues.put(fileName, data);
-        this.getLogger().info("§aDialogue Loaded: "+fileName);
-    }
-
-    public static DialogueMain getPlugin() {
+    public static DialogueMain getInstance() {
         return plugin;
     }
 
@@ -91,26 +50,84 @@ public class DialogueMain extends PluginBase implements Listener {
         return language;
     }
 
-    @EventHandler
-    public void PlayerMoveEvent(PlayerMoveEvent event){
-        DialoguePlayTask task = playerPlayingTasks.get(event.getPlayer());
-        if(task == null){
-            return;
+    @Override
+    public void onEnable() {
+        plugin = this;
+        path = this.getDataFolder().getPath();
+        this.saveResource("default_dialogue_zh_CN.yml");
+        this.saveResource("default_dialogue_en_US.yml");
+        this.saveResource("config.yml");
+        this.saveResource("languages/zh_cn.properties");
+        new File(path + "/player_caches/").mkdirs();
+        new File(path + "/dialogues/").mkdirs();
+        // start loading configurations
+        Config config = new Config(path + "/config.yml", Config.YAML);
+        lineMaxLength = config.getInt("line_max_length", 64);
+        language = new Language(config.getString("lang"), path + "/languages/");
+        invincibleInDialogue = config.getBoolean("invincible_in_dialogue", false);
+        this.loadAllDialogues();
+        this.getServer().getCommandMap().register("", new DialogueCommands("dialogue"));
+        this.getServer().getPluginManager().registerEvents(this, this);
+        this.getLogger().info("AmbientDialogue Enabled");
+    }
+
+    public void loadAllDialogues() {
+        this.getServer().getScheduler().cancelTask(this);
+        playerPlayingTasks.clear();
+        dialogues.clear(); // 先清空，为reload做准备
+        File folder = new File(path + "/dialogues/");
+        for (File file : Objects.requireNonNull(folder.listFiles())) {
+            this.loadDialogue(file);
         }
-        if(task.dialogueData.isPlayerStill()) {
-            if ((event.getFrom().getFloorX() != event.getTo().getFloorX()) || (event.getFrom().getFloorZ() != event.getTo().getFloorZ())) {
-                event.setCancelled();
+        this.getLogger().info("§a" + dialogues.size() + " dialogue(s) loaded successfully!");
+    }
+
+    public void loadDialogue(File file) {
+        String fileName = file.getName();
+        this.getLogger().info("§eLoading dialogue: " + fileName);
+        Config config = new Config(file, Config.YAML);
+        List<DialogueLineData> lines = new ArrayList<>();
+        for (Map<String, Object> lineDataMap : (List<Map<String, Object>>) config.get("lines", new LinkedHashMap<>())) {
+            lines.add(new DialogueLineData((String) lineDataMap.get("text"), (String) lineDataMap.get("speaker_name"), (Integer) lineDataMap.get("exist_ticks"), (Integer) lineDataMap.get("play_ticks")));
+        }
+        DialogueData data = new DialogueData(
+                fileName,
+                lines,
+                config.getBoolean("player_still", true),
+                config.get("open_requirements", new ArrayList<>()),
+                config.get("prestart_actions", new ArrayList<>()),
+                config.get("tick_actions", new ArrayList<>()),
+                config.get("end_actions", new ArrayList<>()));
+        dialogues.put(fileName, data);
+        this.getLogger().info("§aDialogue Loaded: " + fileName);
+    }
+
+    @EventHandler
+    public void PlayerQuitEvent(PlayerQuitEvent event) {
+        DialoguePlayTask task = playerPlayingTasks.get(event.getPlayer());
+        if (task != null) {
+            task.end();
+        }
+    }
+
+    @EventHandler
+    public void PlayerDeathEvent(PlayerDeathEvent event) {
+        DialoguePlayTask task = playerPlayingTasks.get(event.getEntity());
+        if (task != null) {
+            task.end();
+        }
+    }
+
+    @EventHandler
+    public void EntityDamageEvent(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            DialoguePlayTask task = playerPlayingTasks.get(player);
+            if (task != null) {
+                if (invincibleInDialogue) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
-
-    @EventHandler
-    public void PlayerQuitEvent(PlayerQuitEvent event){
-        DialoguePlayTask task = playerPlayingTasks.get(event.getPlayer());
-        if(task != null){
-            task.cancel();
-            playerPlayingTasks.remove(event.getPlayer());
-        }
-    }
-
 }

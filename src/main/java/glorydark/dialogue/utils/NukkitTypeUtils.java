@@ -1,4 +1,5 @@
 package glorydark.dialogue.utils;
+
 import cn.nukkit.Server;
 
 /**
@@ -7,10 +8,6 @@ import cn.nukkit.Server;
 public class NukkitTypeUtils {
 
     private static final NukkitType nukkitType;
-
-    public static NukkitType getNukkitType() {
-        return nukkitType;
-    }
 
     static {
         switch (Server.getInstance().getCodename().toLowerCase()) {
@@ -30,6 +27,10 @@ public class NukkitTypeUtils {
                 nukkitType = NukkitType.NUKKITX;
                 break;
         }
+    }
+
+    public static NukkitType getNukkitType() {
+        return nukkitType;
     }
 
     public enum NukkitType {

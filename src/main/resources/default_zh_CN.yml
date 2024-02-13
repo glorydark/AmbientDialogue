@@ -1,0 +1,60 @@
+# 禁止玩家移动
+player_still: true
+lines:
+  # 播放文本
+  - text: Men always remember love because of romance only\n233 # 支持\n换行
+    # 说话者名字（显示）
+    speaker_name: test1
+    # 此段对话的停留时间（tick） 需要大于play_ticks
+    exist_ticks: 50
+    # 文字播放的时间（tick）
+    play_ticks: 40
+# 开启对话条件
+open_requirements:
+  # 此条件为：在指定时间段内可以开启
+  - type: "is_opening_hours"
+    start_time: "2024-02-14-05-02-42"
+    end_time: "2024-02-14-05-04-12"
+    failed_messages:
+      - "Not in the opening hour!"
+    # 是否关闭默认提示
+    enable_default_failed_message: false
+# 开始前执行动作
+prestart_actions:
+  # 当玩家开启时间在指定范围内，执行指令
+  - type: "command"
+    # 指令前置： "op#" "console#"，分别是op执行和控制台指令
+    # 强烈推荐控制台执行，op执行建议安装AuthorizedOP插件
+    commands:
+      - "me 'Morning!'"
+    requirements:
+      - type: "is_opening_hours"
+        start_time: "2024-02-14-05-02-42"
+        end_time: "2024-02-14-05-04-12"
+        failed_messages:
+          - "Not in the opening hour!"
+        # 关闭默认提示
+        enable_default_failed_message: false
+  - type: "messages"
+    messages:
+      - "test"
+  # 当玩家不是第一次播放此对话时，直接跳过对话，执行指令。
+  - type: "skip_dialogue"
+    requirements:
+      - type: "is_the_first_time"
+        # 比较值，默认为true，如果你想要相反的判断，设为false即可
+        compared_value: false
+# 时刻动作，即在某一刻执行相应的指令、消息
+tick_actions:
+  - tick: 20
+    type: "commands"
+    commands:
+      - "me 'test tick message'"
+    requirements:
+      - type: "is_once_only"
+        failed_messages:
+          - "failed message test"
+        # 如果关闭此选项，插件将不会执行默认提示！
+        enable_default_failed_message: false
+# 同prestart_actions部分，但不可使用skip_dialogue
+end_actions: []
