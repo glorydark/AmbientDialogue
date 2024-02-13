@@ -8,7 +8,7 @@ import cn.nukkit.event.player.PlayerDeathEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
-import glorydark.dialogue.action.requirement.RequirementRegistry;
+import glorydark.dialogue.action.requirement.parser.RequirementParserRegistry;
 import glorydark.dialogue.commands.DialogueCommands;
 import glorydark.dialogue.data.DialogueData;
 import glorydark.dialogue.data.DialogueLineData;
@@ -31,7 +31,7 @@ public class DialogueMain extends PluginBase implements Listener {
     public static boolean invincibleInDialogue;
     protected static DialogueMain plugin;
     protected static String path;
-    protected static RequirementRegistry requirementRegistry = new RequirementRegistry();
+    protected static RequirementParserRegistry requirementParserRegistry = new RequirementParserRegistry();
 
     public static DialogueMain getInstance() {
         return plugin;
@@ -53,8 +53,8 @@ public class DialogueMain extends PluginBase implements Listener {
         return language;
     }
 
-    public static RequirementRegistry getRequirementRegistry() {
-        return requirementRegistry;
+    public static RequirementParserRegistry getRequirementRegistry() {
+        return requirementParserRegistry;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package glorydark.dialogue.action.requirement.parser.base;
+package glorydark.dialogue.action.requirement.parser;
 
 import glorydark.dialogue.action.requirement.Requirement;
 

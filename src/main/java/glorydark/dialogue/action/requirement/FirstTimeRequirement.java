@@ -2,8 +2,8 @@ package glorydark.dialogue.action.requirement;
 
 import cn.nukkit.Player;
 import glorydark.dialogue.DialogueMain;
-import glorydark.dialogue.action.requirement.parser.FirstTimeRequirementParser;
-import glorydark.dialogue.action.requirement.parser.base.RequirementParser;
+import glorydark.dialogue.action.requirement.parser.type.FirstTimeRequirementParser;
+import glorydark.dialogue.action.requirement.parser.RequirementParser;
 import glorydark.dialogue.data.DialogueData;
 
 import java.util.List;

@@ -1,8 +1,8 @@
-package glorydark.dialogue.action.requirement.parser;
+package glorydark.dialogue.action.requirement.parser.type;
 
 import glorydark.dialogue.action.requirement.FirstTimeRequirement;
 import glorydark.dialogue.action.requirement.Requirement;
-import glorydark.dialogue.action.requirement.parser.base.RequirementParser;
+import glorydark.dialogue.action.requirement.parser.RequirementParser;
 
 import java.util.List;
 import java.util.Map;

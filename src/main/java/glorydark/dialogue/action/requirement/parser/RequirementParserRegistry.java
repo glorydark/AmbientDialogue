@@ -1,10 +1,10 @@
-package glorydark.dialogue.action.requirement;
+package glorydark.dialogue.action.requirement.parser;
 
 import glorydark.dialogue.DialogueMain;
-import glorydark.dialogue.action.requirement.parser.FirstTimeRequirementParser;
-import glorydark.dialogue.action.requirement.parser.LimitedPlayTimeRequirementParser;
-import glorydark.dialogue.action.requirement.parser.OpeningHourRequirementParser;
-import glorydark.dialogue.action.requirement.parser.base.RequirementParser;
+import glorydark.dialogue.action.requirement.Requirement;
+import glorydark.dialogue.action.requirement.parser.type.FirstTimeRequirementParser;
+import glorydark.dialogue.action.requirement.parser.type.LimitedPlayTimeRequirementParser;
+import glorydark.dialogue.action.requirement.parser.type.OpeningHourRequirementParser;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,13 +14,13 @@ import java.util.Map;
 /**
  * @author glorydark
  */
-public class RequirementRegistry {
+public class RequirementParserRegistry {
 
     public static final String KEY_COMPARED_VALUE = "compared_value";
 
     protected LinkedHashMap<String, RequirementParser> requirementParsers = new LinkedHashMap<>();
 
-    public RequirementRegistry() {
+    public RequirementParserRegistry() {
         registerDefaultParsers();
     }
 
