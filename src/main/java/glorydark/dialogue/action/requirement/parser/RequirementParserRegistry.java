@@ -30,8 +30,8 @@ public class RequirementParserRegistry {
         registerParser("is_opening_hours", new OpeningHourRequirementParser());
     }
 
-    public void registerParser(String key, RequirementParser requirementParser) {
-        requirementParsers.put(key, requirementParser);
+    public void registerParser(String typeName, RequirementParser requirementParser) {
+        requirementParsers.put(typeName, requirementParser);
     }
 
     public List<Requirement> parseRequirement(List<Map<String, Object>> maps) {
