@@ -42,6 +42,12 @@ public class DialogueCommands extends Command {
                 CommandParameter.newType("player", CommandParamType.TEXT),
                 CommandParameter.newType("dialogue_name", CommandParamType.TEXT)
         });
+        this.commandParameters.put("permission", new CommandParameter[]{
+                CommandParameter.newEnum("permission", new String[]{"permission"}),
+                CommandParameter.newEnum("type", new String[]{"add", "remove"}),
+                CommandParameter.newType("player", CommandParamType.TEXT),
+                CommandParameter.newType("permission_name", CommandParamType.TEXT)
+        });
         this.commandParameters.put("reload", new CommandParameter[]{
                 CommandParameter.newEnum("reload", new String[]{"reload"})
         });
@@ -143,6 +149,10 @@ public class DialogueCommands extends Command {
                     }
                     break;
                 case "permission": //dialogue permission add/del player test.permission
+                    if (commandSender.isPlayer() && !commandSender.isOp()) {
+                        commandSender.sendMessage(DialogueMain.getLanguage().translateString((Player) commandSender, "command_not_authorized"));
+                        return true;
+                    }
                     if (strings.length != 4) {
                         return false;
                     }
