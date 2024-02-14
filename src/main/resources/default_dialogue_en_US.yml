@@ -15,8 +15,8 @@ lines:
 open_requirements:
   # This can execute command in opening hours.
   - type: "is_in_opening_hours"
-    start_time: "2024-02-14-05-02-42"
-    end_time: "2024-02-14-05-04-12"
+    start_time: "2024-02-14 05-02-42"
+    end_time: "2024-02-14 05-04-12"
     failed_messages:
       - "Not in the opening hour!"
     enable_default_failed_message: false
