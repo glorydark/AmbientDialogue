@@ -5,6 +5,7 @@ import glorydark.dialogue.action.requirement.Requirement;
 import glorydark.dialogue.action.requirement.parser.type.FirstTimeRequirementParser;
 import glorydark.dialogue.action.requirement.parser.type.LimitedPlayTimeRequirementParser;
 import glorydark.dialogue.action.requirement.parser.type.OpeningHourRequirementParser;
+import glorydark.dialogue.action.requirement.parser.type.PermissionRequirementParser;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,6 +29,7 @@ public class RequirementParserRegistry {
         registerParser("over_limited_play_time", new LimitedPlayTimeRequirementParser());
         registerParser("is_the_first_time", new FirstTimeRequirementParser());
         registerParser("is_in_opening_hours", new OpeningHourRequirementParser());
+        registerParser("has_permissions", new PermissionRequirementParser());
     }
 
     public void registerParser(String typeName, RequirementParser requirementParser) {

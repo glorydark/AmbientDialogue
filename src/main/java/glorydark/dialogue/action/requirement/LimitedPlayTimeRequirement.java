@@ -2,8 +2,8 @@ package glorydark.dialogue.action.requirement;
 
 import cn.nukkit.Player;
 import glorydark.dialogue.DialogueMain;
-import glorydark.dialogue.action.requirement.parser.type.LimitedPlayTimeRequirementParser;
 import glorydark.dialogue.action.requirement.parser.RequirementParser;
+import glorydark.dialogue.action.requirement.parser.type.LimitedPlayTimeRequirementParser;
 import glorydark.dialogue.data.DialogueData;
 
 import java.util.List;
@@ -22,6 +22,10 @@ public class LimitedPlayTimeRequirement extends Requirement {
         this.limitedPlayTime = limitedPlayTime;
     }
 
+    public static RequirementParser getRequirementParser() {
+        return parser;
+    }
+
     @Override
     public boolean canExecute(Player player, DialogueData dialogueData) {
         return (dialogueData.getFinishPlayerData().getOrDefault(player.getName(), 0) <= limitedPlayTime) == comparedValue;
@@ -30,9 +34,5 @@ public class LimitedPlayTimeRequirement extends Requirement {
     @Override
     public String getDefaultFailedMessage(Player player) {
         return DialogueMain.getLanguage().translateString(player, "tip_dialogue_requirement_failed_over_max_play_times");
-    }
-
-    public static RequirementParser getRequirementParser() {
-        return parser;
     }
 }

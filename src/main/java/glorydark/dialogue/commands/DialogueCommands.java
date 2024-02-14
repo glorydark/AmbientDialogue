@@ -7,12 +7,16 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.ConfigSection;
 import glorydark.dialogue.DialogueMain;
 import glorydark.dialogue.data.DialogueData;
 import glorydark.dialogue.form.FormHelper;
 import glorydark.dialogue.utils.Language;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author glorydark
@@ -25,7 +29,7 @@ public class DialogueCommands extends Command {
         this.commandParameters.clear();
         this.commandParameters.put("create", new CommandParameter[]{
                 CommandParameter.newEnum("create", new String[]{"create"}),
-                CommandParameter.newType(DialogueMain.getLanguage().translateString("command_parameter_new_dialogue_name"), CommandParamType.TEXT)
+                CommandParameter.newType("dialogue_name", CommandParamType.TEXT)
         });
         this.commandParameters.put("edit", new CommandParameter[]{
                 CommandParameter.newEnum("edit", new String[]{"edit"})
@@ -35,8 +39,8 @@ public class DialogueCommands extends Command {
         });
         this.commandParameters.put("play", new CommandParameter[]{
                 CommandParameter.newEnum("play", new String[]{"play"}),
-                CommandParameter.newEnum(DialogueMain.getLanguage().translateString("command_parameter_play_player_name"), CommandParameter.ARG_TYPE_TARGET),
-                CommandParameter.newEnum(DialogueMain.getLanguage().translateString("command_parameter_play_dialogue_name"), DialogueMain.getDialogues().keySet().toArray(new String[0]))
+                CommandParameter.newType("player", CommandParamType.TEXT),
+                CommandParameter.newType("dialogue_name", CommandParamType.TEXT)
         });
         this.commandParameters.put("reload", new CommandParameter[]{
                 CommandParameter.newEnum("reload", new String[]{"reload"})
@@ -59,8 +63,29 @@ public class DialogueCommands extends Command {
                             commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_dialogue_existed", strings[1]));
                         } else { // 未存在，将resources里面的default.yml保存为新的文件
                             File file = new File(DialogueMain.getPath() + "/dialogues/" + fileName);
+                            Config config = new Config(file, 2, new ConfigSection() {
+                                {
+                                    this.put("player_still", true);
+                                    this.put("lines", new ArrayList<LinkedHashMap<String, Object>>() {
+                                        {
+                                            this.add(new LinkedHashMap<String, Object>() {
+                                                {
+                                                    this.put("text", "Men always remember love because of romance only\\n233");
+                                                    this.put("speaker_name", "test1");
+                                                    this.put("exist_ticks", 50);
+                                                    this.put("play_ticks", 40);
+                                                }
+                                            });
+                                        }
+                                    });
+                                    this.put("open_requirements", new ArrayList<>());
+                                    this.put("prestart_actions", new ArrayList<>());
+                                    this.put("tick_actions", new ArrayList<>());
+                                    this.put("end_actions", new ArrayList<>());
+                                }
+                            });
                             if (DialogueMain.getInstance().saveResource("default_dialogue_zh_CN.yml", "dialogues/" + file.getName(), false)) {
-                                DialogueMain.getInstance().loadDialogue(file);
+                                DialogueMain.getInstance().loadDialogue(file.getName(), config);
                             }
                             commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_create_success", strings[1]));
                         }
@@ -79,7 +104,7 @@ public class DialogueCommands extends Command {
                     Config config = new Config(DialogueMain.getPath() + "/config.yml", Config.YAML);
                     DialogueMain.lineMaxLength = config.getInt("line_max_length", 64);
                     DialogueMain.language = new Language(DialogueMain.getPath() + "/languages/");
-                    DialogueMain.invincibleInDialogue = config.getBoolean("invincible_in_dialogue", false);
+                    DialogueMain.invincibleInDialogue = config.getBoolean("invincible_in_dialogue", true);
                     DialogueMain.getInstance().loadAllDialogues();
                     commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_reload_success"));
                     break;
@@ -115,6 +140,35 @@ public class DialogueCommands extends Command {
                         FormHelper.showDialogueSelect((Player) commandSender);
                     } else if (!commandSender.isPlayer()) {
                         commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_use_in_game"));
+                    }
+                    break;
+                case "permission": //dialogue permission add/del player test.permission
+                    if (strings.length != 4) {
+                        return false;
+                    }
+                    String playerName = strings[2];
+                    String permissionName = strings[3];
+                    if (Server.getInstance().lookupName(playerName).isPresent()) {
+                        switch (strings[1]) {
+                            case "add":
+                                Config permissionConfig = new Config(DialogueMain.getPath() + "/permission_groups.yml", Config.YAML);
+                                List<String> players = new ArrayList<>(permissionConfig.getStringList(permissionName));
+                                players.add(playerName);
+                                permissionConfig.set(permissionName, players);
+                                permissionConfig.save();
+                                commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_permission_add_success"));
+                                break;
+                            case "remove":
+                                permissionConfig = new Config(DialogueMain.getPath() + "/permission_groups.yml", Config.YAML);
+                                players = new ArrayList<>(permissionConfig.getStringList(permissionName));
+                                players.remove(playerName);
+                                permissionConfig.set(permissionName, players);
+                                permissionConfig.save();
+                                commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_permission_remove_success"));
+                                break;
+                        }
+                    } else {
+                        commandSender.sendMessage(DialogueMain.getLanguage().translateString((Player) commandSender, "command_player_not_found", playerName));
                     }
                     break;
             }

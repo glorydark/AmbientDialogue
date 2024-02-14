@@ -64,14 +64,14 @@ public class DialogueMain extends PluginBase implements Listener {
         this.saveResource("default_dialogue_zh_CN.yml");
         this.saveResource("default_dialogue_en_US.yml");
         this.saveResource("config.yml");
-        this.saveResource("languages/zh_cn.properties");
+        this.saveResource("languages/zh_CN.properties");
         new File(path + "/player_caches/").mkdirs();
         new File(path + "/dialogues/").mkdirs();
         // start loading configurations
         Config config = new Config(path + "/config.yml", Config.YAML);
         lineMaxLength = config.getInt("line_max_length", 64);
         language = new Language(path + "/languages/");
-        invincibleInDialogue = config.getBoolean("invincible_in_dialogue", false);
+        invincibleInDialogue = config.getBoolean("invincible_in_dialogue", true);
         this.loadAllDialogues();
         this.getServer().getCommandMap().register("", new DialogueCommands("dialogue"));
         this.getServer().getPluginManager().registerEvents(this, this);
@@ -89,10 +89,7 @@ public class DialogueMain extends PluginBase implements Listener {
         this.getLogger().info("§a" + dialogues.size() + " dialogue(s) loaded successfully!");
     }
 
-    public void loadDialogue(File file) {
-        String fileName = file.getName();
-        this.getLogger().info("§eLoading dialogue: " + fileName);
-        Config config = new Config(file, Config.YAML);
+    public void loadDialogue(String fileName, Config config) {
         List<DialogueLineData> lines = new ArrayList<>();
         for (Map<String, Object> lineDataMap : (List<Map<String, Object>>) config.get("lines", new LinkedHashMap<>())) {
             lines.add(new DialogueLineData((String) lineDataMap.get("text"), (String) lineDataMap.get("speaker_name"), (Integer) lineDataMap.get("exist_ticks"), (Integer) lineDataMap.get("play_ticks")));
@@ -107,6 +104,13 @@ public class DialogueMain extends PluginBase implements Listener {
                 config.get("end_actions", new ArrayList<>()));
         dialogues.put(fileName, data);
         this.getLogger().info("§aDialogue Loaded: " + fileName);
+    }
+
+    public void loadDialogue(File file) {
+        String fileName = file.getName();
+        this.getLogger().info("§eLoading dialogue: " + fileName);
+        Config config = new Config(file, Config.YAML);
+        loadDialogue(fileName, config);
     }
 
     @EventHandler

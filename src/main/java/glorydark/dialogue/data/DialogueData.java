@@ -96,6 +96,7 @@ public class DialogueData {
             player.setImmobile(true);
         }
         DialoguePlayTask task = new DialoguePlayTask(player, this);
+        DialogueMain.getPlayerPlayingTasks().put(player, task);
         DialogueMain.getInstance().getServer().getScheduler().scheduleRepeatingTask(DialogueMain.getInstance(), task, 1);
         sender.sendMessage(DialogueMain.getLanguage().translateString((Player) sender, "command_play_to_player_success", player.getName()));
     }

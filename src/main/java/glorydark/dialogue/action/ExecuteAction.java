@@ -7,7 +7,6 @@ import glorydark.dialogue.action.type.SimpleCommandAction;
 import glorydark.dialogue.action.type.SimpleMessageAction;
 import glorydark.dialogue.action.type.SkipDialogueAction;
 import glorydark.dialogue.data.DialogueData;
-import glorydark.dialogue.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
