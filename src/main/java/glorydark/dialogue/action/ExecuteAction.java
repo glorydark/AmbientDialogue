@@ -47,12 +47,6 @@ public abstract class ExecuteAction {
         for (Requirement requirement : requirements) {
             if (!requirement.canExecute(player, dialogueData)) {
                 valid = false;
-                if (requirement.isEnableDefaultFailedMessage()) {
-                    Utils.sendPlayerMessage(player, requirement.getDefaultFailedMessage(player));
-                }
-                for (String failedMessage : requirement.getFailedMessages()) {
-                    Utils.sendPlayerMessage(player, failedMessage);
-                }
                 break;
             }
         }

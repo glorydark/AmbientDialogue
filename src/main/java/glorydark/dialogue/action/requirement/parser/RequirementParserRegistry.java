@@ -26,8 +26,8 @@ public class RequirementParserRegistry {
 
     protected void registerDefaultParsers() {
         registerParser("over_limited_play_time", new LimitedPlayTimeRequirementParser());
-        registerParser("is_first_time", new FirstTimeRequirementParser());
-        registerParser("is_opening_hours", new OpeningHourRequirementParser());
+        registerParser("is_the_first_time", new FirstTimeRequirementParser());
+        registerParser("is_in_opening_hours", new OpeningHourRequirementParser());
     }
 
     public void registerParser(String typeName, RequirementParser requirementParser) {
@@ -40,6 +40,7 @@ public class RequirementParserRegistry {
             Requirement requirement = parseRequirement(map);
             if (requirement == null) {
                 DialogueMain.getInstance().getLogger().warning("Failed in parsing requirement map: " + map);
+                continue;
             }
             requirements.add(requirement);
         }

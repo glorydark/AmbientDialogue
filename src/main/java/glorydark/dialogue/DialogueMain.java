@@ -70,7 +70,7 @@ public class DialogueMain extends PluginBase implements Listener {
         // start loading configurations
         Config config = new Config(path + "/config.yml", Config.YAML);
         lineMaxLength = config.getInt("line_max_length", 64);
-        language = new Language(config.getString("lang"), path + "/languages/");
+        language = new Language(path + "/languages/");
         invincibleInDialogue = config.getBoolean("invincible_in_dialogue", false);
         this.loadAllDialogues();
         this.getServer().getCommandMap().register("", new DialogueCommands("dialogue"));

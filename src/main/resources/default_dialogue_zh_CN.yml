@@ -1,0 +1,30 @@
+# 禁止玩家移动
+player_still: true
+lines:
+  # 播放文本
+  - text: Men always remember love because of romance only\n233 # 支持\n换行
+    # 说话者名字（显示）
+    speaker_name: test1
+    # 此段对话的停留时间（tick） 需要大于play_ticks
+    exist_ticks: 50
+    # 文字播放的时间（tick）
+    play_ticks: 40
+# 开启对话条件
+open_requirements:
+  # 此条件为：在指定时间段内可以开启
+  - type: "is_in_opening_hours"
+    start_time: "2024-02-14 05-02-42"
+    end_time: "2024-02-14 08-04-12"
+    failed_messages:
+      - "Not in the opening hour!"
+    # 是否关闭默认提示
+    enable_default_failed_message: false
+tick_actions:
+  - tick: 1
+    type: "command"
+    commands:
+      - "me 'test tick message'"
+    requirements:
+      - type: "is_the_first_time"
+# 同prestart_actions部分，但不可使用skip_dialogue
+end_actions: []

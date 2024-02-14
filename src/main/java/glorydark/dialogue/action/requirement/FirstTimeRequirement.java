@@ -21,7 +21,7 @@ public class FirstTimeRequirement extends Requirement {
 
     @Override
     public boolean canExecute(Player player, DialogueData dialogueData) {
-        return dialogueData.getFinishPlayerData().containsKey(player.getName()) == comparedValue;
+        return dialogueData.getFinishPlayerData().containsKey(player.getName()) != comparedValue;
     }
 
     @Override

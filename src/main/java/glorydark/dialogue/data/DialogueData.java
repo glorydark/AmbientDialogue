@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class DialogueData {
 
-    public List<Requirement> openRequirements = new ArrayList<>();
+    public List<Requirement> openRequirements;
     protected String identifier;
     protected List<DialogueLineData> dialogueLineData;
     protected boolean playerStill;
@@ -33,7 +33,7 @@ public class DialogueData {
 
     protected List<ExecuteAction> endActions = new ArrayList<>(); // todo
 
-    protected LinkedHashMap<String, Integer> finishPlayerData;
+    protected LinkedHashMap<String, Integer> finishPlayerData = new LinkedHashMap<>();
 
     public DialogueData(String identifier, List<DialogueLineData> dataList, boolean playerStill, List<Map<String, Object>> openRequirements, List<Map<String, Object>> preStartActions, List<Map<String, Object>> tickActions, List<Map<String, Object>> endActions) {
         this.identifier = identifier;
@@ -53,16 +53,19 @@ public class DialogueData {
     }
 
     public void loadFinishPlayerData() {
-        Config config = new Config(DialogueMain.getPath() + "/player_caches/" + identifier + ".yml", Config.YAML);
+        Config config = new Config(DialogueMain.getPath() + "/player_caches/" + identifier, Config.YAML);
         for (Map.Entry<String, Object> objectEntry : config.getAll().entrySet()) {
             finishPlayerData.put(objectEntry.getKey(), (Integer) objectEntry.getValue());
         }
     }
 
     public void updateFinishPlayerData(Player player) {
-        Config config = new Config(DialogueMain.getPath() + "/player_caches/" + identifier + ".yml", Config.YAML);
-        config.set(player.getName(), config.getInt(player.getName(), 0) + 1);
+        String playerName = player.getName();
+        int count = finishPlayerData.getOrDefault(playerName, 0) + 1;
+        Config config = new Config(DialogueMain.getPath() + "/player_caches/" + identifier, Config.YAML);
+        config.set(playerName, count);
         config.save();
+        finishPlayerData.put(playerName, count);
     }
 
     public void play(CommandSender sender, Player player) {
@@ -78,7 +81,7 @@ public class DialogueData {
             }
         }
         ResponseData responseData = executePreStartActions(player);
-        if (responseData.getBooleanResponse(ResponseDataType.BOOLEAN_SKIP_DIALOGUE)) {
+        if (responseData.getBooleanResponse(ResponseDataType.BOOLEAN_SKIP_DIALOGUE, false)) {
             DialogueSkipEvent dialogueSkipEvent = new DialogueSkipEvent(player, this);
             HandlerManager.callEvent(dialogueSkipEvent);
             this.executeEndActions(player);
@@ -115,9 +118,9 @@ public class DialogueData {
         if (actions.size() == 0) {
             return;
         }
-        for (ExecuteAction preStartAction : actions) {
-            if (preStartAction.checkValid(player, this)) {
-                preStartAction.execute(player, this);
+        for (ExecuteAction tickAction : actions) {
+            if (tickAction.checkValid(player, this)) {
+                tickAction.execute(player, this);
             }
         }
     }

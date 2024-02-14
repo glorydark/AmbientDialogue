@@ -24,7 +24,7 @@ public class ResponseData {
         return responses.get(responseDataType);
     }
 
-    public boolean getBooleanResponse(ResponseDataType responseDataType) {
-        return (boolean) responses.getOrDefault(responseDataType, true);
+    public boolean getBooleanResponse(ResponseDataType responseDataType, boolean defaultValue) {
+        return (boolean) responses.getOrDefault(responseDataType, defaultValue);
     }
 }

@@ -14,7 +14,7 @@ lines:
 # This is the preconditions to start a dialogue
 open_requirements:
   # This can execute command in opening hours.
-  - type: "is_opening_hours"
+  - type: "is_in_opening_hours"
     start_time: "2024-02-14-05-02-42"
     end_time: "2024-02-14-05-04-12"
     failed_messages:
@@ -36,15 +36,11 @@ prestart_actions:
 tick_actions:
   # This means at this tick, actions will be executed.
   - tick: 20
-    type: "commands"
+    type: "command"
     commands:
       - "me 'test tick message'"
     requirements:
-      - type: "is_once_only"
-        failed_messages:
-          - "failed message test"
-        # If disabled, this plugin will not send default failed message to players.
-        enable_default_failed_message: false
+      - type: "is_the_first_time"
 # How to edit this part is equal to the key "prestart_actions",
 # but you cannot use skip_dialogue action.
 end_actions: []
