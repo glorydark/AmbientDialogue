@@ -31,7 +31,7 @@ public class DialogueData {
 
     protected LinkedHashMap<Integer, List<ExecuteAction>> tickActions = new LinkedHashMap<>();
 
-    protected List<ExecuteAction> endActions = new ArrayList<>(); // todo
+    protected List<ExecuteAction> endActions = new ArrayList<>();
 
     protected LinkedHashMap<String, Integer> finishPlayerData = new LinkedHashMap<>();
 
@@ -98,7 +98,7 @@ public class DialogueData {
         DialoguePlayTask task = new DialoguePlayTask(player, this);
         DialogueMain.getPlayerPlayingTasks().put(player, task);
         DialogueMain.getInstance().getServer().getScheduler().scheduleRepeatingTask(DialogueMain.getInstance(), task, 1);
-        sender.sendMessage(DialogueMain.getLanguage().translateString((Player) sender, "command_play_to_player_success", player.getName()));
+        sender.sendMessage(DialogueMain.getLanguage().translateString(sender, "command_play_to_player_success", player.getName()));
     }
 
     public ResponseData executePreStartActions(Player player) {
@@ -129,9 +129,9 @@ public class DialogueData {
     public void executeEndActions(Player player) {
         player.setImmobile(false);
         updateFinishPlayerData(player);
-        for (ExecuteAction preStartAction : endActions) {
-            if (preStartAction.checkValid(player, this)) {
-                preStartAction.execute(player, this);
+        for (ExecuteAction endAction : endActions) {
+            if (endAction.checkValid(player, this)) {
+                endAction.execute(player, this);
             }
         }
     }

@@ -66,7 +66,7 @@ public class DialogueCommands extends Command {
                     } else {
                         String fileName = strings[1] + ".yml"; // 保存文件名
                         if (DialogueMain.getDialogues().containsKey(fileName)) { // 如果已经存在，提示错误
-                            commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_dialogue_existed", strings[1]));
+                            commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_dialogue_existed", strings[1]));
                         } else { // 未存在，将resources里面的default.yml保存为新的文件
                             File file = new File(DialogueMain.getPath() + "/dialogues/" + fileName);
                             Config config = new Config(file, 2, new ConfigSection() {
@@ -93,15 +93,15 @@ public class DialogueCommands extends Command {
                             if (DialogueMain.getInstance().saveResource("default_dialogue_zh_CN.yml", "dialogues/" + file.getName(), false)) {
                                 DialogueMain.getInstance().loadDialogue(file.getName(), config);
                             }
-                            commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_create_success", strings[1]));
+                            commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_create_success", strings[1]));
                         }
                     }
                     break;
                 case "help":
-                    commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_help_create"));
-                    commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_help_play"));
-                    commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_help_reload"));
-                    commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_help_edit"));
+                    commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_help_create"));
+                    commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_help_play"));
+                    commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_help_reload"));
+                    commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_help_edit"));
                     break;
                 case "reload":
                     if (commandSender.isPlayer() && !commandSender.isOp()) { // 普通玩家不允许reload
@@ -112,11 +112,11 @@ public class DialogueCommands extends Command {
                     DialogueMain.language = new Language(DialogueMain.getPath() + "/languages/");
                     DialogueMain.invincibleInDialogue = config.getBoolean("invincible_in_dialogue", true);
                     DialogueMain.getInstance().loadAllDialogues();
-                    commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_reload_success"));
+                    commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_reload_success"));
                     break;
                 case "play": // dialogue play BizarreDark test.yml
                     if (commandSender.isPlayer() && !commandSender.isOp()) {
-                        commandSender.sendMessage(DialogueMain.getLanguage().translateString((Player) commandSender, "command_not_authorized"));
+                        commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_not_authorized"));
                         return true;
                     }
                     if (strings.length == 3) {
@@ -126,16 +126,16 @@ public class DialogueCommands extends Command {
                             Player player = Server.getInstance().getPlayer(playerName);
                             if (player != null) {
                                 if (DialogueMain.getPlayerPlayingTasks().containsKey(player)) { // 避免玩家已经播放对话
-                                    commandSender.sendMessage(DialogueMain.getLanguage().translateString((Player) commandSender, "command_player_in_dialogue", playerName));
+                                    commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_player_in_dialogue", playerName));
                                     return true;
                                 }
                                 DialogueData data = DialogueMain.getDialogues().get(fileName);
                                 data.play(commandSender, player);
                             } else {
-                                commandSender.sendMessage(DialogueMain.getLanguage().translateString((Player) commandSender, "command_player_not_found", playerName));
+                                commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_player_not_found", playerName));
                             }
                         } else {
-                            commandSender.sendMessage(DialogueMain.getLanguage().translateString((Player) commandSender, "command_dialogue_not_found", fileName));
+                            commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_dialogue_not_found", fileName));
                         }
                     } else {
                         Server.getInstance().dispatchCommand(commandSender, "dialogue help");
@@ -145,12 +145,12 @@ public class DialogueCommands extends Command {
                     if (commandSender.isOp()) {
                         FormHelper.showDialogueSelect((Player) commandSender);
                     } else if (!commandSender.isPlayer()) {
-                        commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_use_in_game"));
+                        commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_use_in_game"));
                     }
                     break;
                 case "permission": //dialogue permission add/del player test.permission
                     if (commandSender.isPlayer() && !commandSender.isOp()) {
-                        commandSender.sendMessage(DialogueMain.getLanguage().translateString((Player) commandSender, "command_not_authorized"));
+                        commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_not_authorized"));
                         return true;
                     }
                     if (strings.length != 4) {
@@ -166,7 +166,7 @@ public class DialogueCommands extends Command {
                                 players.add(playerName);
                                 permissionConfig.set(permissionName, players);
                                 permissionConfig.save();
-                                commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_permission_add_success"));
+                                commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_permission_add_success"));
                                 break;
                             case "remove":
                                 permissionConfig = new Config(DialogueMain.getPath() + "/permission_groups.yml", Config.YAML);
@@ -174,11 +174,11 @@ public class DialogueCommands extends Command {
                                 players.remove(playerName);
                                 permissionConfig.set(permissionName, players);
                                 permissionConfig.save();
-                                commandSender.sendMessage(DialogueMain.getLanguage().translateString("command_permission_remove_success"));
+                                commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_permission_remove_success"));
                                 break;
                         }
                     } else {
-                        commandSender.sendMessage(DialogueMain.getLanguage().translateString((Player) commandSender, "command_player_not_found", playerName));
+                        commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_player_not_found", playerName));
                     }
                     break;
             }

@@ -1,6 +1,7 @@
 package glorydark.dialogue.utils;
 
 import cn.nukkit.Player;
+import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.Config;
 
 import java.io.File;
@@ -25,12 +26,20 @@ public class Language {
         }
     }
 
-    public String translateString(String key, Object... params) {
+    protected String translateString(String key, Object... params) {
         String originText = (String) lang.getOrDefault(defaultLang, new HashMap<>()).getOrDefault(key, "Key not found!");
         for (int i = 1; i <= params.length; i++) {
             originText = originText.replaceAll("%" + i + "%", params[i - 1].toString());
         }
         return originText;
+    }
+
+    public String translateString(CommandSender sender, String key, Object... params) {
+        if (sender.isPlayer()) {
+            return translateString(((Player) sender), key, params);
+        } else {
+            return translateString(key, params);
+        }
     }
 
     public String translateString(Player player, String key, Object... params) {
