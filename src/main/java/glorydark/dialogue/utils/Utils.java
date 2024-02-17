@@ -37,22 +37,28 @@ public class Utils {
 
     public static void parseAndExecuteCommand(Player player, String command) {
         if (command.startsWith("console#")) {
-            Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), command.replace("%player%", player.getName()));
+            Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), replace(player, command));
         } else if (command.startsWith("op#")) {
             if (player.isOp()) {
-                Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
+                Server.getInstance().dispatchCommand(player, replace(player, command));
             } else {
                 Server.getInstance().addOp(player.getName());
                 try {
-                    Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
+                    Server.getInstance().dispatchCommand(player, replace(player, command));
                 } catch (Exception e) {
                     Server.getInstance().removeOp(player.getName()); // 防止撤销不掉
                 }
                 Server.getInstance().removeOp(player.getName());
             }
         } else {
-            Server.getInstance().dispatchCommand(player, command.replace("%player%", player.getName()));
+            Server.getInstance().dispatchCommand(player, replace(player, command));
         }
+    }
+
+    public static String replace(Player player, String string) {
+        return string.replaceFirst("op#", "")
+                .replaceFirst("console#", "")
+                .replace("%player%", player.getName());
     }
 
     public static Date stringToDate(String string) {

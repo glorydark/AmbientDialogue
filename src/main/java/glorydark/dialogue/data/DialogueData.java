@@ -128,12 +128,12 @@ public class DialogueData {
 
     public void executeEndActions(Player player) {
         player.setImmobile(false);
-        updateFinishPlayerData(player);
         for (ExecuteAction endAction : endActions) {
             if (endAction.checkValid(player, this)) {
                 endAction.execute(player, this);
             }
         }
+        updateFinishPlayerData(player);
     }
 
     public void saveAll() {
