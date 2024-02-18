@@ -62,7 +62,7 @@ public class DialogueCommands extends Command {
                         return true;
                     }
                     if (strings.length != 2) {
-                        Server.getInstance().dispatchCommand(commandSender, "dialogue help");
+                        Server.getInstance().executeCommand(commandSender, "dialogue help");
                     } else {
                         String fileName = strings[1] + ".yml"; // 保存文件名
                         if (DialogueMain.getDialogues().containsKey(fileName)) { // 如果已经存在，提示错误
@@ -138,7 +138,7 @@ public class DialogueCommands extends Command {
                             commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_dialogue_not_found", fileName));
                         }
                     } else {
-                        Server.getInstance().dispatchCommand(commandSender, "dialogue help");
+                        Server.getInstance().executeCommand(commandSender, "dialogue help");
                     }
                     break;
                 case "edit":
