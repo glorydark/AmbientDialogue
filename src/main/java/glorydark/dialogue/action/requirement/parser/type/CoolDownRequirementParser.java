@@ -1,7 +1,7 @@
 package glorydark.dialogue.action.requirement.parser.type;
 
 import glorydark.dialogue.action.requirement.Requirement;
-import glorydark.dialogue.action.requirement.parser.CoolDownRequirement;
+import glorydark.dialogue.action.requirement.CoolDownRequirement;
 import glorydark.dialogue.action.requirement.parser.IncomparableRequirementParser;
 
 import java.util.List;

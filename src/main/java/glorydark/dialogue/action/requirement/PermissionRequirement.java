@@ -1,9 +1,10 @@
-package glorydark.dialogue.action.requirement.parser;
+package glorydark.dialogue.action.requirement;
 
 import cn.nukkit.Player;
 import cn.nukkit.utils.Config;
 import glorydark.dialogue.DialogueMain;
 import glorydark.dialogue.action.requirement.Requirement;
+import glorydark.dialogue.action.requirement.parser.RequirementParser;
 import glorydark.dialogue.action.requirement.parser.type.PermissionRequirementParser;
 import glorydark.dialogue.data.DialogueData;
 

@@ -29,6 +29,7 @@ public class RequirementParserRegistry {
         registerParser("has_permissions", new PermissionRequirementParser());
         registerParser("daily", new DailyRequirementParser());
         registerParser("cool_down", new CoolDownRequirementParser());
+        registerParser("has_played_dialogues", new DialoguePremiseRequirementParser());
     }
 
     public void registerParser(String typeName, RequirementParser requirementParser) {

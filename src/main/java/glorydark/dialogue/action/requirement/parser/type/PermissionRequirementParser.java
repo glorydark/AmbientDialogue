@@ -1,7 +1,7 @@
 package glorydark.dialogue.action.requirement.parser.type;
 
 import glorydark.dialogue.action.requirement.Requirement;
-import glorydark.dialogue.action.requirement.parser.PermissionRequirement;
+import glorydark.dialogue.action.requirement.PermissionRequirement;
 import glorydark.dialogue.action.requirement.parser.RequirementParser;
 
 import java.util.ArrayList;

@@ -1,26 +1,27 @@
-package glorydark.dialogue.action.requirement.parser;
+package glorydark.dialogue.action.requirement;
 
 import cn.nukkit.Player;
 import glorydark.dialogue.DialogueMain;
 import glorydark.dialogue.action.requirement.Requirement;
+import glorydark.dialogue.action.requirement.parser.RequirementParser;
 import glorydark.dialogue.action.requirement.parser.type.CoolDownRequirementParser;
-import glorydark.dialogue.action.requirement.parser.type.DailyRequirementParser;
 import glorydark.dialogue.api.DialogueAPI;
 import glorydark.dialogue.data.DialogueData;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
  * @author glorydark
  */
-public class DailyRequirement extends Requirement {
+public class CoolDownRequirement extends Requirement {
 
-    protected static final DailyRequirementParser parser = new DailyRequirementParser();
+    protected static final CoolDownRequirementParser parser = new CoolDownRequirementParser();
 
-    public DailyRequirement(boolean comparedValue, List<String> failedMessages) {
+    public long coolDownMillis;
+
+    public CoolDownRequirement(long coolDownMillis, boolean comparedValue, List<String> failedMessages) {
         super(comparedValue, failedMessages);
+        this.coolDownMillis = coolDownMillis;
     }
 
     public static RequirementParser getRequirementParser() {
@@ -29,10 +30,13 @@ public class DailyRequirement extends Requirement {
 
     @Override
     public boolean canExecute(Player player, DialogueData dialogueData) {
+        if (this.coolDownMillis < 0) {
+            return false;
+        } else if (this.coolDownMillis == 0){
+            return true;
+        }
         long lastMillis = DialogueAPI.getPlayerLastPlayedMillis(player, dialogueData.getIdentifier());
-        boolean b1 =  Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == new Calendar.Builder().setInstant(new Date(lastMillis)).build().get(Calendar.DAY_OF_MONTH);
-        boolean b2 = System.currentTimeMillis() - lastMillis <= 86400000;
-        return !b2 || !b1;
+        return System.currentTimeMillis() - lastMillis >= this.coolDownMillis;
     }
 
     @Override
