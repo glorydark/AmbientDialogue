@@ -27,7 +27,7 @@ public class RequirementParserRegistry {
         registerParser("is_the_first_time", new FirstTimeRequirementParser());
         registerParser("is_in_opening_hours", new OpeningHourRequirementParser());
         registerParser("has_permissions", new PermissionRequirementParser());
-        registerParser("is_daily", new DailyRequirementParser());
+        registerParser("daily", new DailyRequirementParser());
         registerParser("has_cooldown", new CoolDownRequirementParser());
     }
 
