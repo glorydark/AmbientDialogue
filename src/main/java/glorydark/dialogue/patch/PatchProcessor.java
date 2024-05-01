@@ -8,6 +8,9 @@ import glorydark.dialogue.api.DialogueAPI;
 import glorydark.dialogue.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -32,7 +35,13 @@ public class PatchProcessor {
                         playerConf.set(DialogueAPI.KEY_PLAYED_TIMES, section);
                         playerConf.save();
                     }
+                    listFile.delete();
                 }
+            }
+            try {
+                Files.delete(Path.of(file.getPath()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             Config config = new Config(DialogueMain.getPath() + "/languages/zh_CN.properties", Config.PROPERTIES);
             config.set("tip_dialogue_requirement_failed_in_cool_down", "§c该对话暂时无法进入，请耐心等待！");
