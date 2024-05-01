@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import glorydark.dialogue.DialogueMain;
 import glorydark.dialogue.action.requirement.parser.RequirementParser;
 import glorydark.dialogue.action.requirement.parser.type.FirstTimeRequirementParser;
+import glorydark.dialogue.api.DialogueAPI;
 import glorydark.dialogue.data.DialogueData;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class FirstTimeRequirement extends Requirement {
 
     @Override
     public boolean canExecute(Player player, DialogueData dialogueData) {
-        return dialogueData.getFinishPlayerData().containsKey(player.getName()) != comparedValue;
+        return (DialogueAPI.getPlayerPlayedTimes(player, dialogueData.getIdentifier()) > 0) != comparedValue;
     }
 
     @Override
