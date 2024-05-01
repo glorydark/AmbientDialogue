@@ -28,7 +28,7 @@ public class RequirementParserRegistry {
         registerParser("is_in_opening_hours", new OpeningHourRequirementParser());
         registerParser("has_permissions", new PermissionRequirementParser());
         registerParser("daily", new DailyRequirementParser());
-        registerParser("has_cooldown", new CoolDownRequirementParser());
+        registerParser("cool_down", new CoolDownRequirementParser());
     }
 
     public void registerParser(String typeName, RequirementParser requirementParser) {
