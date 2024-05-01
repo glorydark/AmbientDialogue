@@ -2,3 +2,4 @@ line_max_length: 64
 # 对话中无敌
 # If this option is set to true, player will be invincible when playing dialogues.
 invincible_in_dialogue: true
+version: "1.2.0"

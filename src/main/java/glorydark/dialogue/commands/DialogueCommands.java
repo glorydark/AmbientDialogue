@@ -8,7 +8,9 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.ConfigSection;
+import cn.nukkit.utils.TextFormat;
 import glorydark.dialogue.DialogueMain;
+import glorydark.dialogue.api.DialogueAPI;
 import glorydark.dialogue.data.DialogueData;
 import glorydark.dialogue.form.FormHelper;
 import glorydark.dialogue.utils.Language;
@@ -17,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author glorydark
@@ -120,17 +123,12 @@ public class DialogueCommands extends Command {
                         return true;
                     }
                     if (strings.length == 3) {
-                        String fileName = strings[2] + ".yml";
+                        String fileName = strings[2];
                         if (DialogueMain.getDialogues().containsKey(fileName)) {
                             String playerName = strings[1];
                             Player player = Server.getInstance().getPlayer(playerName);
                             if (player != null) {
-                                if (DialogueMain.getPlayerPlayingTasks().containsKey(player)) { // 避免玩家已经播放对话
-                                    commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_player_in_dialogue", playerName));
-                                    return true;
-                                }
-                                DialogueData data = DialogueMain.getDialogues().get(fileName);
-                                data.play(commandSender, player);
+                                DialogueAPI.playDialogue(commandSender, player, fileName, false);
                             } else {
                                 commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_player_not_found", playerName));
                             }
@@ -179,6 +177,31 @@ public class DialogueCommands extends Command {
                         }
                     } else {
                         commandSender.sendMessage(DialogueMain.getLanguage().translateString(commandSender, "command_player_not_found", playerName));
+                    }
+                    break;
+                case "cleard": // Lazying ...
+                    if (strings.length == 2) {
+                        try {
+                            int i = 0;
+                            File file = new File(DialogueMain.getPath() + "/players/");
+                            for (File listFile : file.listFiles()) {
+                                Config conf = new Config(listFile, Config.YAML);
+                                ConfigSection section = conf.getSection(DialogueAPI.KEY_PLAYED_TIMES);
+                                section.remove(strings[1]);
+                                conf.set(DialogueAPI.KEY_PLAYED_TIMES, section);
+
+                                ConfigSection section1 = conf.getSection(DialogueAPI.KEY_LAST_PLAYED_MILLIS);
+                                section1.remove(strings[1]);
+                                conf.set(DialogueAPI.KEY_PLAYED_TIMES, section1);
+                                conf.save();
+                                i++;
+                            }
+                            commandSender.sendMessage(TextFormat.GREEN + "成功清理 " +
+                                    TextFormat.YELLOW + i + TextFormat.GREEN + " 个对话" +
+                                    TextFormat.YELLOW + strings[1] + TextFormat.GREEN + " 数据");
+                        } catch (Exception ignored) {
+                            commandSender.sendMessage(TextFormat.RED + "Error whilst clearing data!");
+                        }
                     }
                     break;
             }

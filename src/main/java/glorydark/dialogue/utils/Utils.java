@@ -31,6 +31,10 @@ public class Utils {
         return length;
     }
 
+    public static String getNameWithoutFormatSuffix(String s) {
+        return s.substring(0, s.lastIndexOf("."));
+    }
+
     public static String getLineBlank() {
         return blankOfALine;
     }

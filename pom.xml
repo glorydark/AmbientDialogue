@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>glorydark.nukkit</groupId>
-    <artifactId>AmbientDialogue-PNX1.0</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <artifactId>AmbientDialogue</artifactId>
+    <version>1.2.0-C1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

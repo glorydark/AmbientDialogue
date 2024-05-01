@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import glorydark.dialogue.DialogueMain;
 import glorydark.dialogue.action.requirement.parser.RequirementParser;
 import glorydark.dialogue.action.requirement.parser.type.LimitedPlayTimeRequirementParser;
+import glorydark.dialogue.api.DialogueAPI;
 import glorydark.dialogue.data.DialogueData;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class LimitedPlayTimeRequirement extends Requirement {
 
     @Override
     public boolean canExecute(Player player, DialogueData dialogueData) {
-        return (dialogueData.getFinishPlayerData().getOrDefault(player.getName(), 0) <= limitedPlayTime) == comparedValue;
+        return (DialogueAPI.getPlayerPlayedTimes(player, dialogueData.getIdentifier()) <= limitedPlayTime) == comparedValue;
     }
 
     @Override

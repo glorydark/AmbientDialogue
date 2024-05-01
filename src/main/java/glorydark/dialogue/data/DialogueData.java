@@ -8,6 +8,7 @@ import glorydark.dialogue.DialoguePlayTask;
 import glorydark.dialogue.action.ActionType;
 import glorydark.dialogue.action.ExecuteAction;
 import glorydark.dialogue.action.requirement.Requirement;
+import glorydark.dialogue.api.DialogueAPI;
 import glorydark.dialogue.event.manager.HandlerManager;
 import glorydark.dialogue.event.type.DialoguePreStartEvent;
 import glorydark.dialogue.event.type.DialogueSkipEvent;
@@ -33,8 +34,6 @@ public class DialogueData {
 
     protected List<ExecuteAction> endActions = new ArrayList<>();
 
-    protected LinkedHashMap<String, Integer> finishPlayerData = new LinkedHashMap<>();
-
     public DialogueData(String identifier, List<DialogueLineData> dataList, boolean playerStill, List<Map<String, Object>> openRequirements, List<Map<String, Object>> preStartActions, List<Map<String, Object>> tickActions, List<Map<String, Object>> endActions) {
         this.identifier = identifier;
         this.dialogueLineData = dataList;
@@ -49,48 +48,33 @@ public class DialogueData {
         for (Map<String, Object> action : endActions) {
             this.addEndExecuteAction(ExecuteAction.parseExecuteActionFromMap(action));
         }
-        loadFinishPlayerData();
     }
 
-    public void loadFinishPlayerData() {
-        Config config = new Config(DialogueMain.getPath() + "/player_caches/" + identifier, Config.YAML);
-        for (Map.Entry<String, Object> objectEntry : config.getAll().entrySet()) {
-            finishPlayerData.put(objectEntry.getKey(), (Integer) objectEntry.getValue());
-        }
-    }
-
-    public void updateFinishPlayerData(Player player) {
-        String playerName = player.getName();
-        int count = finishPlayerData.getOrDefault(playerName, 0) + 1;
-        Config config = new Config(DialogueMain.getPath() + "/player_caches/" + identifier, Config.YAML);
-        config.set(playerName, count);
-        config.save();
-        finishPlayerData.put(playerName, count);
-    }
-
-    public void play(CommandSender sender, Player player) {
-        for (Requirement openRequirement : openRequirements) {
-            if (!openRequirement.canExecute(player, this)) {
-                if (openRequirement.isEnableDefaultFailedMessage()) {
-                    Utils.sendPlayerMessage(player, openRequirement.getDefaultFailedMessage(player));
+    public void play(CommandSender sender, Player player, boolean bypassCheck) {
+        if (!bypassCheck) {
+            for (Requirement openRequirement : openRequirements) {
+                if (!openRequirement.canExecute(player, this)) {
+                    if (openRequirement.isEnableDefaultFailedMessage()) {
+                        Utils.sendPlayerMessage(player, openRequirement.getDefaultFailedMessage(player));
+                    }
+                    for (String failedMessage : openRequirement.getFailedMessages()) {
+                        Utils.sendPlayerMessage(player, failedMessage);
+                    }
+                    return;
                 }
-                for (String failedMessage : openRequirement.getFailedMessages()) {
-                    Utils.sendPlayerMessage(player, failedMessage);
-                }
+            }
+            ResponseData responseData = executePreStartActions(player);
+            if (responseData.getBooleanResponse(ResponseDataType.BOOLEAN_SKIP_DIALOGUE, false)) {
+                DialogueSkipEvent dialogueSkipEvent = new DialogueSkipEvent(player, this);
+                HandlerManager.callEvent(dialogueSkipEvent);
+                this.executeEndActions(player);
                 return;
             }
-        }
-        ResponseData responseData = executePreStartActions(player);
-        if (responseData.getBooleanResponse(ResponseDataType.BOOLEAN_SKIP_DIALOGUE, false)) {
-            DialogueSkipEvent dialogueSkipEvent = new DialogueSkipEvent(player, this);
-            HandlerManager.callEvent(dialogueSkipEvent);
-            this.executeEndActions(player);
-            return;
-        }
-        DialoguePreStartEvent dialoguePreStartEvent = new DialoguePreStartEvent(player, this);
-        HandlerManager.callEvent(dialoguePreStartEvent);
-        if (dialoguePreStartEvent.isCancelled()) {
-            return;
+            DialoguePreStartEvent dialoguePreStartEvent = new DialoguePreStartEvent(player, this);
+            HandlerManager.callEvent(dialoguePreStartEvent);
+            if (dialoguePreStartEvent.isCancelled()) {
+                return;
+            }
         }
         if (playerStill) {
             player.setImmobile(true);
@@ -133,7 +117,8 @@ public class DialogueData {
                 endAction.execute(player, this);
             }
         }
-        updateFinishPlayerData(player);
+        DialogueAPI.addPlayerPlayedTimes(player, this.getIdentifier(), 1);
+        DialogueAPI.setPlayerLastPlayedMillis(player, this.getIdentifier(), System.currentTimeMillis());
     }
 
     public void saveAll() {
@@ -184,9 +169,5 @@ public class DialogueData {
 
     public String getIdentifier() {
         return identifier;
-    }
-
-    public LinkedHashMap<String, Integer> getFinishPlayerData() {
-        return finishPlayerData;
     }
 }

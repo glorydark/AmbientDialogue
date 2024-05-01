@@ -8,11 +8,14 @@ import cn.nukkit.event.player.PlayerDeathEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.ConfigSection;
 import glorydark.dialogue.action.requirement.parser.RequirementParserRegistry;
 import glorydark.dialogue.commands.DialogueCommands;
 import glorydark.dialogue.data.DialogueData;
 import glorydark.dialogue.data.DialogueLineData;
+import glorydark.dialogue.patch.PatchProcessor;
 import glorydark.dialogue.utils.Language;
+import glorydark.dialogue.utils.Utils;
 
 import java.io.File;
 import java.util.*;
@@ -25,10 +28,12 @@ public class DialogueMain extends PluginBase implements Listener {
 
     protected static HashMap<Player, DialoguePlayTask> playerPlayingTasks = new HashMap<>();
     protected static HashMap<String, DialogueData> dialogues = new HashMap<>();
+    protected static LinkedHashMap<Player, ConfigSection> playerDataCaches = new LinkedHashMap<>(); // 缓存
 
     public static Language language;
     public static int lineMaxLength;
     public static boolean invincibleInDialogue;
+    public static String configVersion;
     protected static DialogueMain plugin;
     protected static String path;
     protected static RequirementParserRegistry requirementParserRegistry = new RequirementParserRegistry();
@@ -69,9 +74,11 @@ public class DialogueMain extends PluginBase implements Listener {
         new File(path + "/dialogues/").mkdirs();
         // start loading configurations
         Config config = new Config(path + "/config.yml", Config.YAML);
+        configVersion = config.getString("version", "1.1.0");
         lineMaxLength = config.getInt("line_max_length", 64);
         language = new Language(path + "/languages/");
         invincibleInDialogue = config.getBoolean("invincible_in_dialogue", true);
+        PatchProcessor.executePatch(); // upgrade configurations
         this.loadAllDialogues();
         this.getServer().getCommandMap().register("", new DialogueCommands("dialogue"));
         this.getServer().getPluginManager().registerEvents(this, this);
@@ -107,7 +114,7 @@ public class DialogueMain extends PluginBase implements Listener {
     }
 
     public void loadDialogue(File file) {
-        String fileName = file.getName();
+        String fileName = Utils.getNameWithoutFormatSuffix(file.getName());
         this.getLogger().info("§eLoading dialogue: " + fileName);
         Config config = new Config(file, Config.YAML);
         loadDialogue(fileName, config);
@@ -115,10 +122,12 @@ public class DialogueMain extends PluginBase implements Listener {
 
     @EventHandler
     public void PlayerQuitEvent(PlayerQuitEvent event) {
-        DialoguePlayTask task = playerPlayingTasks.get(event.getPlayer());
+        Player player = event.getPlayer();
+        DialoguePlayTask task = playerPlayingTasks.get(player);
         if (task != null) {
             task.end();
         }
+        playerDataCaches.remove(player);
     }
 
     @EventHandler
@@ -140,5 +149,9 @@ public class DialogueMain extends PluginBase implements Listener {
                 }
             }
         }
+    }
+
+    public static LinkedHashMap<Player, ConfigSection> getPlayerDataCaches() {
+        return playerDataCaches;
     }
 }
